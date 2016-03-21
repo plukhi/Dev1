@@ -1,0 +1,1175 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.2.33.min.js"></script>
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
+	<link rel="stylesheet" href="iThing.css" type="text/css" />
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+    <script src="jQueryDateRangeSlider.js"></script>
+	<script src="underScore.js"></script>
+	<script src="customeDateRange.js"></script>
+	<script>
+
+</script>
+		<style>
+        button{
+        font-weight: normal !important;
+        font-size: 13px !important;
+        }
+        .fullWidth {
+            width: 100%;
+        }
+        
+       .column:first-child, .columns:first-child {
+            margin-left: 1%;
+        }
+        .chartBoxMargin {
+           margin-left: 1%;
+           margin-right: 1%;
+           margin-top: 15px;
+        }
+        
+        .gapMargin {
+            margin: 2px 2px 2px 2px;
+            overflow: hidden;
+            width: 1;
+            height: 1;
+        }
+        
+        .chartOuterCon{
+            padding: 0px;
+            position: relative;
+            margin-left: 5px;
+            margin-bottom : 5px;
+            border-radius: 7px;
+            -webkit-box-shadow:0 0 10px rgba(51,133, 255, 0.8);
+            -moz-box-shadow:0 0 10px rgba(51,133, 255, 0.8);
+            box-shadow:0 0 10px rgba(51,133, 255, 0.8);
+            overflow: hidden;
+			display: inline-block;
+			width:32%;
+			 margin-top: 3%;
+        }
+        
+        .chartNarrow{
+            height: 245px;
+            font-size:12px;
+        }
+        
+        .chartMedium{
+            height: 335px;
+            font-size:18px;
+        }
+        
+    
+       .chartWide{
+            height: 530px;
+            font-size:20px;
+        }
+        
+        .chartFull{
+            height: 1150px;
+            font-size:22px;
+        }
+        
+        .chartCushion {
+            margin: 3px 3px 3px 3px;
+            height: 89%;
+        }
+        
+        .dashHolder{
+            height: 100%;
+        }
+        
+        .chartHolder{
+            height: 95%;
+        }
+        
+        .chartLabel {
+            font-family:Arial,Helvetica,sans-serif;
+            font-weight: bold;
+            color: #FFFFFF;        
+            background-color: rgba(51,133,255,0.9);
+            display:block;
+            text-align: center;
+            padding: 2px 0;
+            height: 8%;
+		
+			
+        }
+        .chartLabel a ,.chartLabel a:hover{
+            color: #FFFFFF;
+            text-decoration: none !important;
+        }
+        
+        .filterLabel {
+            padding: 1px;
+            margin-left: 5px;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        
+        .filterCompList {
+            padding: 1px;
+            margin: 5px;
+        }
+        
+        .clear {
+          clear: both;
+          display: block;
+          overflow: hidden;
+          visibility: hidden;
+          width: 0;
+          height: 0;
+        }
+        
+        #onClickControl{
+                display: none;
+                position: fixed;
+                top: 0%;
+                left: 0%;
+                width: 100%;
+                height: 100%;
+                background-color: #ffffff;
+                z-index:10;
+                opacity:0.6;
+                filter: alpha(opacity=50);
+        }
+        
+        .google-visualization-controls-rangefilter-thumblabel {
+            font-size: 14px;
+        }
+
+		.vertAlign {
+			text-align: center;
+			position: relative;
+			top: 50%;
+		   -ms-transform: translateY(-50%);
+		   -webkit-transform: translateY(-50%);
+			transform: translateY(-50%);
+		}
+		.style-1 input[type="text"] {
+		padding: 10px;
+		border: solid 1px #dcdcdc;
+		transition: box-shadow 0.3s, border 0.3s;
+		}
+		.style-1 input[type="text"]:focus,
+		.style-1 input[type="text"].focus {
+		border: solid 1px #707070;
+		box-shadow: 0 0 5px 1px #969696;
+		}
+		   .filterLabel {
+        padding: 1px;
+        margin-left: 5px;
+        margin-right: 5px;
+        font-weight: bold;
+    }
+    
+    .filterCompList {
+        padding: 1px;
+        margin: 5px;
+    }
+		</style>
+    <script type="text/javascript">
+	
+	     var start = new Date().getTime();
+		 AWS.config.update({accessKeyId: 'AKIAJOP2O6BQE7SENR2A', secretAccessKey: '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'});
+		 AWS.config.region = 'us-east-1';
+		 var s3 = new AWS.S3();
+		 var dateRangeSlider=false;
+		 var customFilter=false;
+		 var jsonObj;
+		 var chartData;
+		 var gChartData;
+		 var chartDataGlobal;
+		 var chartReset=false;
+		 var globalMin,globalMax;
+     
+      
+		//google.charts.load('current', {'packages':['corechart']});
+		   google.charts.load('current', {'packages':['corechart', 'controls']});
+        // google.charts.setOnLoadCallback(drawStuff);
+	
+	
+
+      // alert(jsonString);
+      // Load the Visualization API and the piechart package.
+   
+       
+      // Set a callback to run when the Google Visualization API is loaded.
+	
+    function drawChart() {
+
+
+	    //var dashboard = new google.visualization.Dashboard(document.getElementById('programmatic_dashboard_div'));
+		
+		
+		       // We omit "var" so that programmaticSlider is visible to changeRange.
+     
+		  
+	var jsonData='[{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkHpyEAE"},"Id":"a0Di000000gkHpyEAE","IsDeleted":false,"Name":"115905","CreatedDate":"2015-10-06T06:39:00.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-06T06:39:46.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-06T06:39:46.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028d0CEAQ","Actual__c":2.03,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"December-2014","ReportDate__c":"2014-01-30","SLA_Exceeded__c":0,"SLA_Met__c":1,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"Americas","ReportingPeriodStartDate__c":"2014-12-01","ReportingPeriodEndDate__c":"2014-12-31","MonthNumeric__c":12,"SLAProgress__c":"-26.98","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":100,"CalWeekNum__c":53,"CalendarWeek__c":"2014 - CW 53","Quarter__c":4,"SLADimensionDigest__c":"/sMhxxbRqUNOFSnlQ2gCQmfdRjwNsOrqYGYpmiTJKWrrCciUXwl0U2Me/3RHoMHJiAynvmxDetBgqoMbVJW3Mg==","SLADimensionsKey__c":"2014-12-31 00:00:00/sMhxxbRqUNOFSnlQ2gCQmfdRjwNsOrqYGYpmiTJKWrrCciUXwl0U2Me/3RHoMHJiAynvmxDetBgqoMbVJW3Mg==","CalendarQuarter__c":"Q4","Year__c":2014,"YearYYYY__c":"2014","agg1__c":29413269.50,"YearPerWeekNum__c":"2014","QuarterPerWeekNum__c":"Q4","isComputedFromFact__c":true,"agg2__c":26095209.50,"agg3__c":54581071.00,"agg4__c":42720572.00,"agg5__c":26543809.50,"agg6__c":3236300000.00,"YearMonthWeek__c":"2014-12","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkjrgEAA"},"Id":"a0Di000000gkjrgEAA","IsDeleted":false,"Name":"115965","CreatedDate":"2015-10-08T08:29:23.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-08T08:29:25.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-08T08:29:25.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":1.25,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"January-2015","ReportDate__c":"2014-02-30","SLA_Exceeded__c":0,"SLA_Met__c":0,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2015-01-01","ReportingPeriodEndDate__c":"2015-01-31","MonthNumeric__c":1,"SLAProgress__c":"-50.79","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":101,"CalWeekNum__c":5,"CalendarWeek__c":"2015 - CW 05","Quarter__c":1,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2015-01-31 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q1","Year__c":2015,"YearYYYY__c":"2015","agg1__c":4186221.00,"YearPerWeekNum__c":"2015","QuarterPerWeekNum__c":"Q1","isComputedFromFact__c":true,"agg2__c":10734000.00,"agg3__c":0.00,"agg4__c":5097574.00,"agg5__c":2246281.00,"agg6__c":563400000.00,"YearMonthWeek__c":"2015-1","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkjrhEAA"},"Id":"a0Di000000gkjrhEAA","IsDeleted":false,"Name":"115966","CreatedDate":"2015-10-08T08:29:23.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-08T08:29:25.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-08T08:29:25.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":2.02,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"February-2015","ReportDate__c":"2014-03-30","SLA_Exceeded__c":0,"SLA_Met__c":1,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2015-02-01","ReportingPeriodEndDate__c":"2015-02-28","MonthNumeric__c":2,"SLAProgress__c":"61.60","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":100,"CalWeekNum__c":9,"CalendarWeek__c":"2015 - CW 09","Quarter__c":1,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2015-02-28 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q1","Year__c":2015,"YearYYYY__c":"2015","agg1__c":2317638.50,"YearPerWeekNum__c":"2015","QuarterPerWeekNum__c":"Q1","isComputedFromFact__c":true,"agg2__c":4501238.00,"agg3__c":2696948.50,"agg4__c":9635681.00,"agg5__c":2683968.00,"agg6__c":588500000.00,"YearMonthWeek__c":"2015-2","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkjriEAA"},"Id":"a0Di000000gkjriEAA","IsDeleted":false,"Name":"115967","CreatedDate":"2015-10-08T08:29:23.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-08T08:29:25.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-08T08:29:25.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":0.00,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"March-2015","ReportDate__c":"2014-04-30","SLA_Exceeded__c":0,"SLA_Met__c":0,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2015-03-01","ReportingPeriodEndDate__c":"2015-03-31","MonthNumeric__c":3,"SLAProgress__c":"-100.00","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":102,"CalWeekNum__c":14,"CalendarWeek__c":"2015 - CW 14","Quarter__c":1,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2015-03-31 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q1","Year__c":2015,"YearYYYY__c":"2015","agg1__c":0.00,"YearPerWeekNum__c":"2015","QuarterPerWeekNum__c":"Q1","isComputedFromFact__c":true,"agg2__c":1211180.50,"agg3__c":4919060.00,"agg4__c":0.00,"agg5__c":0.00,"agg6__c":149200000.00,"YearMonthWeek__c":"2015-3","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkjrjEAA"},"Id":"a0Di000000gkjrjEAA","IsDeleted":false,"Name":"115968","CreatedDate":"2015-10-08T08:29:23.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-08T08:29:25.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-08T08:29:25.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":6.62,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"April-2015","ReportDate__c":"2014-05-30","SLA_Exceeded__c":0,"SLA_Met__c":2,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2015-04-01","ReportingPeriodEndDate__c":"2015-04-30","MonthNumeric__c":4,"SLAProgress__c":"Data Not Comparable","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":95,"CalWeekNum__c":18,"CalendarWeek__c":"2015 - CW 18","Quarter__c":2,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2015-04-30 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q2","Year__c":2015,"YearYYYY__c":"2015","agg1__c":0.00,"YearPerWeekNum__c":"2015","QuarterPerWeekNum__c":"Q2","isComputedFromFact__c":true,"agg2__c":1215174.50,"agg3__c":0.00,"agg4__c":4006002.00,"agg5__c":0.00,"agg6__c":55300000.00,"YearMonthWeek__c":"2015-4","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkHpdEAE"},"Id":"a0Di000000gkHpdEAE","IsDeleted":false,"Name":"115884","CreatedDate":"2015-10-06T06:39:00.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-06T06:39:46.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-06T06:39:46.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":2.65,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"August-2014","ReportDate__c":"2014-06-30","SLA_Exceeded__c":0,"SLA_Met__c":1,"SLA_Not_Met__c":1,"Score_Description__c":" Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2014-08-01","ReportingPeriodEndDate__c":"2014-08-31","MonthNumeric__c":8,"SLAProgress__c":"No Data","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":99,"CalWeekNum__c":36,"CalendarWeek__c":"2014 - CW 36","Quarter__c":3,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2014-08-31 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q3","Year__c":2014,"YearYYYY__c":"2014","agg1__c":1319018.50,"YearPerWeekNum__c":"2014","QuarterPerWeekNum__c":"Q3","isComputedFromFact__c":true,"agg2__c":0.00,"agg3__c":2046925.00,"agg4__c":2659670.00,"agg5__c":3592196.50,"agg6__c":226500000.00,"YearMonthWeek__c":"2014-8","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkHpeEAE"},"Id":"a0Di000000gkHpeEAE","IsDeleted":false,"Name":"115885","CreatedDate":"2015-10-06T06:39:00.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-06T06:39:46.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-06T06:39:46.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":1.28,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"September-2014","ReportDate__c":"2014-07-30","SLA_Exceeded__c":0,"SLA_Met__c":0,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2014-09-01","ReportingPeriodEndDate__c":"2014-09-30","MonthNumeric__c":9,"SLAProgress__c":"-51.70","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":101,"CalWeekNum__c":40,"CalendarWeek__c":"2014 - CW 40","Quarter__c":3,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2014-09-30 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q3","Year__c":2014,"YearYYYY__c":"2014","agg1__c":2216054.00,"YearPerWeekNum__c":"2014","QuarterPerWeekNum__c":"Q3","isComputedFromFact__c":true,"agg2__c":8021530.50,"agg3__c":2554000.00,"agg4__c":3567564.00,"agg5__c":1030000.00,"agg6__c":341800000.00,"YearMonthWeek__c":"2014-9","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkHpfEAE"},"Id":"a0Di000000gkHpfEAE","IsDeleted":false,"Name":"115886","CreatedDate":"2015-10-06T06:39:00.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-06T06:39:46.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-06T06:39:46.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":2.00,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"October-2014","ReportDate__c":"2014-08-30","SLA_Exceeded__c":0,"SLA_Met__c":2,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2014-10-01","ReportingPeriodEndDate__c":"2014-10-31","MonthNumeric__c":10,"SLAProgress__c":"56.25","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":100,"CalWeekNum__c":44,"CalendarWeek__c":"2014 - CW 44","Quarter__c":4,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2014-10-31 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q4","Year__c":2014,"YearYYYY__c":"2014","agg1__c":1499250.00,"YearPerWeekNum__c":"2014","QuarterPerWeekNum__c":"Q4","isComputedFromFact__c":true,"agg2__c":14935203.50,"agg3__c":4855094.50,"agg4__c":9123756.00,"agg5__c":3056908.00,"agg6__c":575600000.00,"YearMonthWeek__c":"2014-10","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"},{"attributes":{"type":"SLAScorecard__c","url":"/services/data/v35.0/sobjects/SLAScorecard__c/a0Di000000gkHpfEAE"},"Id":"a0Di000000gkHpfEAE","IsDeleted":false,"Name":"115886","CreatedDate":"2015-10-06T06:39:00.000+0000","CreatedById":"005i0000001BF8IAAW","LastModifiedDate":"2015-10-06T06:39:46.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2015-10-06T06:39:46.000+0000","Metric__c":"a01i0000007Xqb3AAC","UserAccessObject__c":"a0Pi00000028POhEAM","Actual__c":2.00,"ESL__c":90.00,"MSL__c":75.00,"Month__c":"October-2014","ReportDate__c":"2014-09-30","SLA_Exceeded__c":0,"SLA_Met__c":2,"SLA_Not_Met__c":1,"Score_Description__c":"Not Met","SLAType__c":"ESL > MSL","Region__c":"APAC","ReportingPeriodStartDate__c":"2014-10-01","ReportingPeriodEndDate__c":"2014-10-31","MonthNumeric__c":10,"SLAProgress__c":"56.25","WeightedSLAMet__c":0.00,"WeightedSLANotMet__c":1.00,"Scale__c":100,"CalWeekNum__c":44,"CalendarWeek__c":"2014 - CW 44","Quarter__c":4,"SLADimensionDigest__c":"3J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","SLADimensionsKey__c":"2014-10-31 00:00:003J3iL8ENOxloHATN79rJ7pvO4Usz0tXfH3ZbuYHX3csTqBYED5OFZ6D1TMjaQSwerRIyC748wiLbzcMa3b+UCg==","CalendarQuarter__c":"Q4","Year__c":2014,"YearYYYY__c":"2014","agg1__c":1499250.00,"YearPerWeekNum__c":"2014","QuarterPerWeekNum__c":"Q4","isComputedFromFact__c":true,"agg2__c":14935203.50,"agg3__c":4855094.50,"agg4__c":9123756.00,"agg5__c":3056908.00,"agg6__c":575600000.00,"YearMonthWeek__c":"2014-10","IsFactPurged__c":false,"IsFactArchived__c":false,"SLAStatus__c":"Not Met"}]';
+
+      // Create our data table out of JSON data loaded from server.
+	  
+	  var dashmetaJson='[{"attributes":{"type":"EPADashboardMeta__c","url":"/services/data/v35.0/sobjects/EPADashboardMeta__c/a09i000000ruFYnAAM"},"Id":"a09i000000ruFYnAAM","OwnerId":"005i0000005mIS2AAM","IsDeleted":false,"Name":"OTC_31","CreatedDate":"2015-07-08T04:49:39.000+0000","CreatedById":"005i0000005mIS2AAM","LastModifiedDate":"2016-01-08T10:31:38.000+0000","LastModifiedById":"005i0000001BF8IAAW","SystemModstamp":"2016-01-08T10:31:38.000+0000","LastViewedDate":"2016-01-21T10:34:15.000+0000","DeveloperName__c":"OTC_31","Title__c":"OTC -- >Over 90 Days Ageing %","TitleColor__c":"#000000","TitleSize__c":25,"isMobileDefault__c":true,"ChartSize__c":"Wide","Metric__c":"a01i0000007Xqb3AAC","TimeRangeBand__c":24,"ShowChatterFeed__c":true,"ShowTimeRangeFilter__c":true}]';
+	  
+	  var chartMetaJson='[{"attributes":{"type":"EPADashboardChartMeta__c","url":"/services/data/v35.0/sobjects/EPADashboardChartMeta__c/a0Bi000000YeLCMEA3"},"Id":"a0Bi000000YeLCMEA3","IsDeleted":false,"Name":"DEMO2_3","CreatedDate":"2015-03-30T07:38:10.000+0000","CreatedById":"005i00000039ktOAAQ","LastModifiedDate":"2015-04-01T12:49:28.000+0000","LastModifiedById":"005i00000039ktOAAQ","SystemModstamp":"2015-04-01T12:49:28.000+0000","LastViewedDate":"2016-02-04T06:03:12.000+0000","EPADashboardMeta__c":"a09i000000f7KX1AAM","DataSource__c":"SLAScorecard__c","ChartType__c":"pie3d","ReportUniqueName__c":"EPA_DEMO2_NM","GroupingColumn__c":"SLAStatus__c","Title__c":"SLA Performance ( Last Month )","AggregationColumn__c":"count(id)","DrillDownTo__c":"No Drilldown","GridPosition__c":3,"AggregationLabel__c":"Count by SLA Status","BenchmarkSeries__c":"Not Met:red,Met:blue,Exceeds:green","SLACompare__c":false,"DecimalPlaces__c":2,"ShowValues__c":true,"ShowTimeRangeFilter__c":false,"debug__c":false,"widgetType__c":"Google Chart","VerticalAxisTitle__c":"Vertical Axis Title","hAxisOptions__c":{"title" : "_Status"},"vAxisOptions__c":{"title" :"Test Vertical Axis Option"},"LegendPosition__c ":"top","TooltipConfig__c":{"text" : "both"},"CustomSummaryFormulas__c":"SUM(SLAScorecard__c.SLA_Met__c)/Count(id)*const(100)"},{"attributes":{"type":"EPADashboardChartMeta__c","url":"/services/data/v35.0/sobjects/EPADashboardChartMeta__c/a0Bi000000YeLCMEA3"},"Id":"a0Bi000000YeLCMEA3","IsDeleted":false,"Name":"DEMO2_3","CreatedDate":"2015-03-30T07:38:10.000+0000","CreatedById":"005i00000039ktOAAQ","LastModifiedDate":"2015-04-01T12:49:28.000+0000","LastModifiedById":"005i00000039ktOAAQ","SystemModstamp":"2015-04-01T12:49:28.000+0000","LastViewedDate":"2016-02-04T06:03:12.000+0000","EPADashboardMeta__c":"a09i000000f7KX1AAM","DataSource__c":"SLAScorecard__c","ChartType__c":"column","ReportUniqueName__c":"EPA_DEMO2_NM","GroupingColumn__c":"ReportDate__c","Title__c":"SLA Performance ( Last Month )","AggregationColumn__c":"count(id)","DrillDownTo__c":"No Drilldown","GridPosition__c":3,"AggregationLabel__c":"Count by SLA Status","BenchmarkSeries__c":"Not Met:red,Met:blue,Exceeds:green","SLACompare__c":false,"DecimalPlaces__c":2,"ShowValues__c":true,"ShowTimeRangeFilter__c":false,"debug__c":false,"widgetType__c":"Google Chart","VerticalAxisTitle__c":"Count of SLA ","hAxisOptions__c":{"title" : "Aaaaa _Status","textPosition":"out","slantedText":true},"vAxisOptions__c":{"title" :"Test Vertical Axis Option"},"LegendPosition__c ":"top","TooltipConfig__c":{"text" : "both"},"CustomSummaryFormulas__c":"SUM(SLAScorecard__c.SLA_Met__c)/Count(id)*const(100)"},{"attributes":{"type":"EPADashboardChartMeta__c","url":"/services/data/v35.0/sobjects/EPADashboardChartMeta__c/a0Bi000000YeLCMEA3"},"Id":"a0Bi000000YeLCMEA3","IsDeleted":false,"Name":"DEMO2_3","CreatedDate":"2015-03-30T07:38:10.000+0000","CreatedById":"005i00000039ktOAAQ","LastModifiedDate":"2015-04-01T12:49:28.000+0000","LastModifiedById":"005i00000039ktOAAQ","SystemModstamp":"2015-04-01T12:49:28.000+0000","LastViewedDate":"2016-02-04T06:03:12.000+0000","EPADashboardMeta__c":"a09i000000f7KX1AAM","DataSource__c":"SLAScorecard__c","ChartType__c":"line","ReportUniqueName__c":"EPA_DEMO2_NM","GroupingColumn__c":"SLAStatus__c","Title__c":"SLA Performance ( Last Month )","AggregationColumn__c":"count(id)","DrillDownTo__c":"No Drilldown","GridPosition__c":3,"AggregationLabel__c":"Count by SLA Status","BenchmarkSeries__c":"Not Met:red,Met:blue,Exceeds:green","SLACompare__c":false,"DecimalPlaces__c":2,"ShowValues__c":true,"ShowTimeRangeFilter__c":false,"debug__c":false,"widgetType__c":"Google Chart","VerticalAxisTitle__c":"Count of SLA ","hAxisOptions__c":{"title" : "SLA _Status"},"vAxisOptions__c":{"title" :"Test Vertical Axis Option"},"LegendPosition__c ":"top","TooltipConfig__c":{"text" : "both"},"CustomSummaryFormulas__c":"SUM(SLAScorecard__c.SLA_Met__c)/Count(id)*const(100)"}]';
+	  
+
+
+	var chartMetaObj=jQuery.parseJSON(chartMetaJson);
+	  
+	
+	
+	  var chartMetaObj0=chartMetaObj[0];
+	  var chartMetaObj1=chartMetaObj[1];
+	  var  dashMetaObj0=jQuery.parseJSON(dashmetaJson)[0];
+	 
+	  chartSize=dashMetaObj0.ChartSize__c;
+	  var noOfCharts=chartMetaObj.length;
+	  
+	     programmaticSlider = new google.visualization.ControlWrapper({
+          'controlType': 'NumberRangeFilter',
+          'containerId': 'programmatic_control_div',
+          'options': {
+            'filterColumnLabel': 'Count by SLA Status',
+            'ui': {'labelStacking': 'vertical'}
+          }
+        });
+
+       programmaticChart  = new google.visualization.ChartWrapper({
+        'chartType': 'ColumnChart',
+        'containerId': 'programmatic_chart_div',
+        'options': {
+          'width': 300,
+          'height': 300,
+          'legend': 'none',
+          'chartArea': {'left': 15, 'top': 15, 'right': 0, 'bottom': 0},
+          'pieSliceText': 'value'
+        }
+      });
+
+	  
+		for (chartIndex = 0; chartIndex <noOfCharts; ++chartIndex) {
+				 var chart=setChartType (chartMetaObj[chartIndex].ChartType__c,'chart_div'+chartIndex);
+				  gChartData = new google.visualization.DataTable();
+				  var groupBycolumn=chartMetaObj[chartIndex].GroupingColumn__c ;
+				  var aggregationColumn=chartMetaObj[chartIndex].AggregationColumn__c;
+				  var aggrgationFunction=getAggFunction(aggregationColumn);
+				  var aggregationLabel =chartMetaObj[chartIndex].AggregationLabel__c;
+				  
+				 var aggCol = chartMetaObj[chartIndex].AggregationColumn__c.split(',');
+				 var aggColNums=aggCol.length;
+				 var csfLabels = '';
+				 var cnt = 0;
+
+				var aggLabels = chartMetaObj[chartIndex].AggregationLabel__c;
+				var aggColName;
+				
+					 var index;
+						for (index = 0; index < aggCol.length; ++index) {
+						  aggColName=aggCol[index];
+							if(cnt >= aggColNums ) {
+								if(cnt==0){
+								
+									csfLabels += aggColName;
+								}else{
+									csfLabels += ',';	
+									csfLabels += aggColName;
+								}
+								
+							}                    
+							cnt++;
+					}
+				
+			//alert('csfLabels '+csfLabels);
+				  var csf = new CSFForGroupingData (chartMetaObj[chartIndex].CustomSummaryFormulas__c , aggColNums , csfLabels );
+
+					document.getElementById("titleId"+chartIndex).innerHTML = chartMetaObj[chartIndex].Title__c;
+					 var dataTableHeaders = [];
+					 var str_array = chartMetaObj[chartIndex].GroupingColumn__c.split(',');
+					 var index;
+						for (index = 0; index < str_array.length; ++index) {
+							var grpColName =str_array[index];
+							var chartHeaderMeta = new ChartHeaderMeta(grpColName,grpColName,'string');
+									dataTableHeaders.push(chartHeaderMeta);
+							}
+							var chartHdrCount=dataTableHeaders.lenght;
+							
+							 // chartData=	jQuery.parseJSON(jsonData);
+							 //alert(dateRangeSlider);
+							 
+							 if(dateRangeSlider || customFilter ){
+							 chartData.sort(dateCompare);
+							 var result=_.groupBy(chartData,groupBycolumn);
+								
+
+							 }else{
+								chartDataGlobal=	jQuery.parseJSON(jsonObj);
+								chartDataGlobal.sort(dateCompare);
+								var result=_.groupBy(chartDataGlobal,groupBycolumn);
+								
+							 }
+						
+							 
+							  options = {
+                            pointSize: 5,
+                            pointShape: 'circle'                          
+                        };
+						var cnt=0;
+						var aggColNums=aggregationColumn.split(',');
+						 var aggColNums = aggregationColumn.split(',');
+			
+						 for(var aggColName in aggregationColumn.split(',')) {              
+						//system.debug('>>>aggColName :' + aggColName );
+								if(cnt < aggColNums) {
+								var chartHeaderMeta = new ChartHeaderMeta(aggColName,aggColName,'number');
+									//hdrMeta.aggFuncIdx = cnt;
+									dataTableHeaders.add(hdrMeta);
+									
+								} else {
+									// rest are for CSF so please excuse
+									break;
+								}
+								cnt++;
+							} 
+				var seriesColorMap = new Object();
+				 var bSeries = chartMetaObj[chartIndex].BenchmarkSeries__c;
+				   if(bSeries != '') {                                
+                    var seriesOptStr = bSeries.split(",");
+                    var arrayLength = seriesOptStr.length;
+                    for (var i = 0; i < arrayLength; i++) {
+                        var serOpt = seriesOptStr[i];
+                        var serOptArray = serOpt.split(":");
+                        if(serOptArray.length > 2) {
+                            var clr = serOptArray[2];
+                            seriesColorMap[serOptArray[0]] = clr;
+                            ////alert(serOptArray[0]);
+                        }
+                        ////alert(serOptArray[0]);
+                        // for pie slice colors
+                             /* if(serOptArray.length == 2 && (('pie' === '{!chartDataWrapper.chartMeta.ChartType__c}') || ('pie3d' === '{!chartDataWrapper.chartMeta.ChartType__c}') || ('donut' === '{!chartDataWrapper.chartMeta.ChartType__c}'))){
+                            var clr = serOptArray[1];
+                            seriesColorMap[serOptArray[0]] = clr;         
+                        }*/
+						
+						   if(serOptArray.length == 2 ){
+                            var clr = serOptArray[1];
+                            seriesColorMap[serOptArray[0]] = clr;         
+                        }
+                    }         
+                } 
+				   var seriesOpts = {};
+                       for (var key in seriesColorMap) {
+                          if (seriesColorMap.hasOwnProperty(key)) {
+                            seriesOpts[key] = {color: seriesColorMap[key]};
+						  }
+                        }
+					   options['series'] = seriesOpts;
+					   
+					   //todo
+					  // processChartData(chartData);
+					   
+				  //alert(typeof(chartData[0].SystemModstamp));
+				  
+				 		  
+				  var out=[];
+							if(aggrgationFunction=='sum'){
+								out = _(result).map(function(g, key) {
+									  return { ReportDate__c: key, 
+											   Actual__c: _(g).reduce(function(m,x) { 
+											  return m + x.Actual__c; }, 0) };
+									});
+									gChartData.addColumn(typeof(groupBycolumn),groupBycolumn);
+									gChartData.addColumn("number",aggregationLabel);
+									for (index = 0; index < out.length; ++index) {
+											gChartData.addRows([[out[index].ReportDate__c,out[index].Actual__c]]);
+									}
+									
+							}else if(aggrgationFunction=='count'){
+								gChartData.addColumn(typeof(groupBycolumn),groupBycolumn);
+								gChartData.addColumn("number",aggregationLabel);
+								  for(var name in result) {
+									//alert(name);
+									var value = result[name];
+									//alert(value);
+									gChartData.addRows([[name,value.length]]);
+									//alert(value.length);
+								}
+							
+								
+							}
+							
+							if(('pie' === chartMetaObj[chartIndex].ChartType__c) || ('pie3d' === chartMetaObj[chartIndex].ChartType__c) || ('donut' === chartMetaObj[chartIndex].ChartType__c)){
+                            var dtRowCnt = gChartData.getNumberOfRows(); 
+                            var sliceOpts = {};                   
+                            for(i = 0; i < dtRowCnt; i++) {
+                                var val = gChartData.getValue(i, 0);
+                                sliceOpts[i] = {color : seriesColorMap[val]};
+                            }
+                            options.slices = sliceOpts;
+                         }	
+
+						var hAxisTitle = dataTableHeaders[0].fldLabel;
+
+                        var hAxisOptions = chartMetaObj[chartIndex].hAxisOptions__c;
+                       // var hAxisOptions = {};
+                        //if(hAxixOptCfg != '') {
+                          //  hAxisOptions = eval('('+hAxixOptCfg+')');
+                       // }
+             
+                        if(hAxisOptions['title'] == undefined) {
+                            hAxisOptions['title'] = hAxisTitle;
+                        } 
+                        if(hAxisOptions['titleTextStyle'] == undefined) {
+                            hAxisOptions['titleTextStyle'] = { color: 'black', fontName: 'Arial,Helvetica,sans-serif', fontSize: 14, bold: 'true', italic: 'false' };
+                        }   
+                        if(hAxisOptions['textStyle'] == undefined) {
+                            hAxisOptions['textStyle'] = { color: 'black', fontName: 'Arial,Helvetica,sans-serif', fontSize: 12, bold: 'false', italic: 'false' };
+                        }
+                                                
+                      
+                        
+                        options['hAxis'] = hAxisOptions;
+                        
+						var vAxisTitle = chartMetaObj[chartIndex].VerticalAxisTitle__c; //TODO get from datatable header if not in chartMeta
+                        var vAxisOptions = chartMetaObj[chartIndex].vAxisOptions__c;
+                        //var vAxisOptions = {};
+                        //if(vAxixOptCfg != '') {
+                        //    vAxisOptions = eval('('+vAxixOptCfg+')');
+                       // }
+                        if(vAxisOptions['title'] == undefined) {
+                            vAxisOptions['title'] = vAxisTitle;
+                        } 
+                        if(vAxisOptions['titleTextStyle'] == undefined) {
+                            vAxisOptions['titleTextStyle'] = { color: 'black', fontName: 'Arial,Helvetica,sans-serif', fontSize: 14, bold: 'true', italic: 'false' };
+                        }
+                        if(vAxisOptions['textStyle'] == undefined) {
+                            vAxisOptions['textStyle'] = { color: 'black', fontName: 'Arial,Helvetica,sans-serif', fontSize: 12, bold: 'false', italic: 'false' };
+                        }
+                        
+                        //var vAxisOptions = {title: vAxisTitle ,titleTextStyle:{ color: 'black', fontName: 'Arial,Helvetica,sans-serif', fontSize: 14, bold: 'true', italic: 'false' },
+                        //                    textStyle: { color: 'black', fontName: 'Arial,Helvetica,sans-serif', fontSize: 12, bold: 'false', italic: 'false' }};
+                        options['vAxis'] = vAxisOptions;
+                        // default chartArea options
+                        options['chartArea'] = {backgroundColor: '#FAFAFA', width: '85%', height: '55%', left: '15%'} ;
+                        // default legend option at top
+                        options['legend'] = {position: chartMetaObj[chartIndex].LegendPosition__c, alignment:'center'};
+                        
+						  if(chartMetaObj[chartIndex].TooltipConfig__c != '') {
+                            var tooltipCfg = chartMetaObj[chartIndex].TooltipConfig__c;
+                            options['tooltip'] = tooltipCfg;
+                        }
+						
+						
+                             var domainAxisOpt = {type:'category'};
+                             options['domainAxis'] = domainAxisOpt;  
+
+					if('combo' === chartMetaObj[chartIndex].ChartType__c) {
+                            options['seriesType'] = 'bars';
+                            //options['colors'] = ['yellow','brown','blue','green','red'];
+                            var barOpt = { groupWidth: '60%' };
+                            options['bar'] = barOpt;  
+                            var bSeries = chartMetaObj[chartIndex].BenchmarkSeries__c;
+                            if(bSeries != '') {                                
+                                var defaultOptions = {};  
+                                
+                                for (var i=0; i<chartHdrCount; i++)
+                                {
+                                    defaultOptions[i] = {                                                
+                                        lineWidth: 1,
+                                        pointSize: 1,
+                                        visibleInLegend: true,
+                                        enableInteractivity: true
+                                    };
+                                }
+                                                              
+                                var seriesOptStr = bSeries.split(",");    
+                                var arrayLength = seriesOptStr.length;
+                                for (var i = 0; i < arrayLength; i++) {
+                                    var serOpt = seriesOptStr[i];
+                                    //alert(">>>>>>>"+serOpt );
+                                    var serOptArray = serOpt.split(":");                                    
+                                    var defualtOptionID = serOptArray[0]
+                                    for(var j=0; j< serOptArray.length; j++) {                                        
+                                        var val = serOptArray[j];
+                                    
+                                        if (val != '') {                                            
+                                            //alert(j);
+                                            switch(j) {                                                    
+                                                case 0: // No-op as it is already handled.
+                                                        break;
+                                                case 1: defaultOptions[defualtOptionID].type = val; 
+                                                        //console.log('defaultOptions.type = ' + i + ' :' + val);                                                         
+                                                        break;
+                                                case 2: defaultOptions[defualtOptionID].color = val;
+                                                        //console.log('defaultOptions.color = ' + val); 
+                                                        break;
+                                                case 3: defaultOptions[defualtOptionID].lineWidth = parseFloat(val);
+                                                        //console.log('defaultOptions.lineWidth = ' + parseFloat(val)); 
+                                                        break;
+                                                case 4: defaultOptions[defualtOptionID].pointSize = parseFloat(val);
+                                                        //console.log('defaultOptions.pointSize = ' + parseFloat(val)); 
+                                                        break;
+                                                case 5: defaultOptions[defualtOptionID].visibleInLegend = val;
+                                                        //console.log('defaultOptions.visibleInLegend = ' + val); 
+                                                        break;
+                                                case 6: defaultOptions[defualtOptionID].enableInteractivity = val;
+                                                        //console.log('defaultOptions.enableInteractivity = ' + val); 
+                                                        break;                
+                                            }
+                                        }
+                                    }
+                                }                                
+                                options['series'] = defaultOptions; 
+                                //console.log('Prashant: defaultOptions ::> ' + defaultOptions);  
+                                
+                                if(chartMetaObj[chartIndex].SLACompare__c && (seriesColorDefined == (chartHdrCount - 1))) {
+                                    var vAxixOpts = options['vAxis'];
+                                    //vAxixOpts['title'] = '{!IF(AND(NOT(ISNULL(chartDataWrapper.dataTable)),chartDataWrapper.dataTable.headers.size > //1),chartDataWrapper.dataTable.headers[1].headerLabel,"")}';
+                                    options['vAxis'] = vAxixOpts;
+                                }
+                            }
+                            //alert('>>>'+JSON.stringify(gChartData));
+                            //alert('>>>'+JSON.stringify(options));
+
+                            //console.log('Option'+JSON.stringify(options));
+                        }else if(('pie' === chartMetaObj[chartIndex].ChartType__c) || ('pie3d' === chartMetaObj[chartIndex].ChartType__c) || ('donut' === chartMetaObj[chartIndex].ChartType__c)){
+						
+                            var chartArea = {width: '100%', height: '80%'};
+                            options['chartArea'] = chartArea;
+                            //options['legend'] = {position: '{!chartDataWrapper.chartMeta.LegendPosition__c}', alignment:'center'};
+                            //options['pieSliceText']='{!chartDataWrapper.chartMeta.ChartDataFormat__c}';
+                            if('pie3d' === chartMetaObj[chartIndex].ChartType__c) {
+                                options['is3D'] = true;
+                            }
+                            if('donut' === chartMetaObj[chartIndex].ChartType__c) {
+                                options['pieHole'] = 0.4;
+                            }
+                            //options['title'] = vAxisTitle;
+							options['title'] = chartMetaObj[chartIndex].Title__c;
+                            //alert(JSON.stringify(options));
+					
+                            //alert(JSON.stringify(options));
+							options['titlePosition'] = 'none';
+							options['legend'] = {alignment:'center'};
+                          }else if(('column' === chartMetaObj[chartIndex].ChartType__c) || ('stackedcolumn' === chartMetaObj[chartIndex].ChartType__c)){
+                             //var barOpt = { groupWidth: '20%' };
+                             //options['bar'] = barOpt;
+                             if('stackedcolumn' === chartMetaObj[chartIndex].ChartType__c && 'percentage'===chartMetaObj[chartIndex].ChartDataFormat__c)
+                             {
+                                 options['isStacked']='percent';
+                             }
+                             else
+                             {
+                                 options['isStacked'] = true;
+                             }
+                               	   // dashboard.bind(programmaticSlider, programmaticChart);
+					             //  dashboard.draw(gChartData);
+                         }  
+													 
+							options['chartArea'] = {backgroundColor: '#FAFAFA', width: '10%', height: '50%', left: '15%', right: '5%'};  
+							chart.draw(gChartData ,options);
+							
+					 
+				
+					
+		}
+		 // dashboard.bind(programmaticSlider, programmaticChart);
+					            // dashboard.draw(gChartData);
+		 function dateCompare(a,b) {
+			  if (a.ReportDate__c < b.ReportDate__c)
+				return -1;
+			  else if (a.ReportDate__c > b.ReportDate__c)
+				return 1;
+			  else 
+				return 0;
+			}
+
+
+			function ChartHeaderMeta(grpColName, fldLabel, dataType) {
+			this.grpColName = grpColName;
+			this.fldLabel = fldLabel.substring(0, fldLabel.indexOf("_"));
+			this.dataType = dataType;
+		}
+		
+			function CSFForGroupingData(aFormula1, exprIndex, labels) {
+		
+			this.aFormula = aFormula1;
+			this.exprIndex = exprIndex;
+			this.labels = labels;
+
+			 var lcFormula = this.aFormula.toLowerCase();
+		
+		     this.csfs =[];
+			 var labelList = labels.split(',');
+		     var csfIndex = 0;
+			 var formulaArr=lcFormula.split(',');
+			 
+			 var index;
+			 for (index = 0; index < formulaArr.length; ++index) {
+				 var csfStr=formulaArr[index];
+				 	csfStr = csfStr.trim();
+					csfStr=csfStr.toLowerCase();
+					var csfLabel = 'CSF'+(csfIndex+1);
+					if(labelList.length > csfIndex ) {
+						csfLabel = labelList[csfIndex];
+					}
+					
+					var custSumFrml = new CustomSummaryFormula(csfStr , exprIndex , csfLabel);
+					this.csfs.push(custSumFrml);
+					this.exprEndIdx = custSumFrml.exprEndIdx;
+					csfIndex++;
+					
+				}
+		
+			}
+		
+		function CustomSummaryFormula(csfStr, exprEndIdx, csfLabel) {
+		
+			this.csfStr = csfStr;
+			this.exprEndIdx = exprEndIdx;
+			this.csfLabel = csfLabel;
+		
+            this.expressionStack = [];
+           	csfStr = csfStr.trim();
+			csfStr=csfStr.toLowerCase();
+
+            while(csfStr !='') {
+                var indxOfClosingBraces = csfStr.indexOf(')');                
+                if(indxOfClosingBraces != -1) {
+                    var aggExpr = csfStr.substring(0, indxOfClosingBraces+1);
+                    var csfOprnd = new CSFOperand(aggExpr, exprEndIdx);
+                    this.expressionStack.push(csfOprnd);
+				
+					 	csfOprnd.aggFunction = csfOprnd.aggFunction.trim();
+						csfOprnd.aggFunction=csfOprnd.aggFunction.toLowerCase();
+						if(csfOprnd.aggFunction != 'const' ) {
+                        exprEndIdx++;
+                    }
+                    if(csfOprnd != 'const' ) {
+                        exprEndIdx++;
+                    }
+                    var opr = '';
+                    var indxOfNextClosingBraces = csfStr.indexOf(')' , indxOfClosingBraces+1);
+                    if(indxOfNextClosingBraces != -1) {
+                        var nextAggExpr = csfStr.substring(indxOfClosingBraces+1 , indxOfNextClosingBraces+1);
+                        //System.debug('>> indxOfNextClosingBraces='+indxOfNextClosingBraces+' nextAggExpr='+nextAggExpr);
+                        if( nextAggExpr.indexOf('sum(' ) != -1) {
+                            opr = csfStr.substring(indxOfClosingBraces+1 , csfStr.indexOf('sum(' , indxOfClosingBraces));
+                        } else if( nextAggExpr.indexOf('max(' )  != -1) {
+                            opr = csfStr.substring(indxOfClosingBraces+1 , csfStr.indexOf('max(' , indxOfClosingBraces));
+                        } else if( nextAggExpr.indexOf('min(' )  != -1) {
+                            opr = csfStr.substring(indxOfClosingBraces+1 , csfStr.indexOf('min(' , indxOfClosingBraces));
+                        } else if( nextAggExpr.indexOf('count(' )  != -1) {
+                            opr = csfStr.substring(indxOfClosingBraces+1 , csfStr.indexOf('count(' , indxOfClosingBraces));
+                        } else if( nextAggExpr.indexOf('avg(' )  != -1) {
+                            opr = csfStr.substring(indxOfClosingBraces+1 , csfStr.indexOf('avg(' , indxOfClosingBraces));
+                        } else if( nextAggExpr.indexOf('const(' )  != -1) {
+                            opr = csfStr.substring(indxOfClosingBraces+1 , csfStr.indexOf('const(' , indxOfClosingBraces));
+                        } else {
+                            alert('>>> error scenario . not a valid aggregate function used '+csfStr);
+                        }  
+                    }
+                    if(opr!='') {
+                        var csfOpr = new CSFOperator(opr);
+                        this.expressionStack.push(csfOpr);
+                        var nextIndx = csfStr.indexOf(opr, indxOfClosingBraces+1 );
+                        //alert('>>> opr='+opr);
+                        if(nextIndx != -1 && nextIndx < csfStr.length) {
+                            csfStr = csfStr.substring(nextIndx +1);
+                            //System.debug('>>> new csfStr='+csfStr);
+                        }
+                    }else {
+                        break;
+                    }
+                }                
+            }            
+        
+			
+		}
+		
+		function CSFOperator(aOprtr) {
+				this.aOprtr = aOprtr;
+				if('/' == aOprtr) {
+					oprtr = 'DIVIDE';
+				} else if('*' == aOprtr) {
+					oprtr = 'MULTIPLY';
+				} else if('+' == aOprtr) {
+					oprtr = 'ADD';
+				} else if('-' == aOprtr) {
+					oprtr = 'SUBTRACT';
+				}
+		
+			}
+		
+		   
+		function CSFOperand(oprnd, aExprIndex) {
+			this.oprnd = oprnd;
+			this.aExprIndex = aExprIndex;
+			
+			  if((oprnd.includes('sum(') || oprnd.includes('max(') || oprnd.includes('min(') || oprnd.includes('count(') || oprnd.includes('avg(') || oprnd.includes('const(')) && (oprnd.includes(')'))) {
+                var startIndex= oprnd.indexOf('(');
+                var endIndex= oprnd.indexOf(')');
+                this.aggFunction = oprnd.substring(0, startIndex);
+                this.aggFieldName = oprnd.substring(startIndex+1, endIndex); 
+            } else {
+                
+            }
+		
+			}
+	
+		
+		
+		        
+ function setChartType (chartTypeArg,chartdiv) {
+     var chartType=chartTypeArg;
+	
+	 if('pie3d'==chartType){
+			chartType='pie';
+	 }
+     if('combo' === chartType) {
+         chart = new google.visualization.ComboChart(document.getElementById(chartdiv));         
+     } else if('column' === chartType) {
+         chart = new google.visualization.ColumnChart(document.getElementById(chartdiv));
+     } else if('pie' === chartType) {
+         chart = new google.visualization.PieChart(document.getElementById(chartdiv));
+     } else if('bar' === chartType) {
+         chart = new google.visualization.BarChart(document.getElementById(chartdiv));
+     } else if('line' === chartType) {
+         chart = new google.visualization.LineChart(document.getElementById(chartdiv));
+     } else if('table' === chartType) {
+         chart = new google.visualization.Table(document.getElementById(chartdiv));
+     } else if('histogram' === chartType) {
+         chart = new google.visualization.Histogram(document.getElementById(chartdiv));
+     } else if('area' === chartType) {
+         chart = new google.visualization.AreaChart(document.getElementById(chartdiv));
+     } else if('bubble' === chartType) {
+         chart = new google.visualization.BubbleChart(document.getElementById(chartdiv));
+     }
+	return chart;
+    
+    
+     
+ }										
+	  function getAggFunction (aggFunction) {
+		 var aggFn=aggFunction;
+
+		if(aggFn.indexOf("count") > -1){
+			return 'count';
+		}
+		
+		return 'NA';
+		
+		
+		 
+	 }
+	 
+		function getCount(arr, group) {
+			var count = 0;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i].group == group) {
+					count++;
+				}
+			}
+			return count;
+		}
+
+	}
+
+              function changeRange() {
+                programmaticSlider.setState({'lowValue': 2, 'highValue': 5});
+                programmaticSlider.draw();
+              }
+
+              function changeOptions() {
+                programmaticChart.setOption('is3D', true);
+                programmaticChart.draw();
+              }
+			
+	function drawStuff() {
+
+        var dashboard = new google.visualization.Dashboard(
+          document.getElementById('programmatic_dashboard_div'));
+
+        // We omit "var" so that programmaticSlider is visible to changeRange.
+        programmaticSlider = new google.visualization.ControlWrapper({
+          'controlType': 'NumberRangeFilter',
+          'containerId': 'programmatic_control_div',
+          'options': {
+            'filterColumnLabel': 'Donuts eaten',
+            'ui': {'labelStacking': 'vertical'}
+          }
+        });
+
+       programmaticChart  = new google.visualization.ChartWrapper({
+        'chartType': 'PieChart',
+        'containerId': 'programmatic_chart_div',
+        'options': {
+          'width': 300,
+          'height': 300,
+          'legend': 'none',
+          'chartArea': {'left': 15, 'top': 15, 'right': 0, 'bottom': 0},
+          'pieSliceText': 'value'
+        }
+      });
+  
+      var data = google.visualization.arrayToDataTable([
+        ['Name', 'Donuts eaten'],
+        ['Michael' , 5],
+        ['Elisa', 7],
+        ['Robert', 3],
+        ['John', 2],
+        ['Jessica', 6],
+        ['Aaron', 1],
+        ['Margareth', 8]
+      ]);
+
+      dashboard.bind(programmaticSlider, programmaticChart);
+      dashboard.draw(data);
+    }
+	
+		$(document).ready(function(){
+			$("#myBtn").click(function(){
+					
+			var metric=($("#metricName").val().trim());
+			var year=($("#year").val().trim());
+					//alert(metric);
+					//alert(year);
+				
+			var bucket = new AWS.S3({params: {Bucket: 'epa-novartis-test-genpact'}});	
+			var params;
+			if(year!='' && metric != ''){
+				 params = {Bucket:'epa-novartis-test-genpact',Key:'test/MetricYesr'+metric+'/'+metric+'_'+year+'.json'};		
+			}else if(metric!=''){
+				 params = {Bucket:'epa-novartis-test-genpact',Key:'test/MetricsTime/'+metric+'.json'};		
+			}else{
+				alert('Please enter metric name');
+				   return;
+			}
+		 //params = {Bucket:'epa-novartis-test-genpact',Key:'test/mySLAList9k.json'};	
+			s3.getObject(params, function(error,data)
+				{
+				   if (error) {
+					  console.log(error); // an error occurred
+					  alert(error);
+					} else {
+		 
+					   jsonObj = data.Body.toString();
+						var end1 = new Date().getTime();
+						var time1 = end1 - start;
+						// alert('Execution for Downloading data ' +  time/1000);
+						google.charts.setOnLoadCallback(drawChart);	
+						drawSilder();
+					   var end2 = new Date().getTime();
+					   var time = end2 - end1;
+					  //alert('Execution for render data ' +  time/1000);
+					  //console.log(jsonObj); // request succeeded      
+					$("#divCstFilter").css('display','-webkit-inline-box');
+				   }
+				});
+							
+			});
+		});
+	function drawSilder(){
+		
+			//j$("#dateSlider").dateRangeSlider("destroy");
+			 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+			 var maxDate =[];
+			 var minDate=[];
+
+			 if(chartDataGlobal!= undefined){
+			    maxDate = getMax(chartDataGlobal, "ReportDate__c");
+				
+						//alert(maxDate['ReportDate__c']);
+				minDate=getMin(chartDataGlobal, "ReportDate__c");
+						//alert(minDate['ReportDate__c']);
+				}
+			   
+              var boundStartDt = new Date(2014,01,01); 
+              var boundEndDt = new Date(2016,01,01);
+              if((boundStartDt.getFullYear() == boundEndDt.getFullYear()) && (boundStartDt.getMonth() == boundEndDt.getMonth())) {
+                  // year month same so adjust start date else slider fails when min and max are both same date
+                  boundStartDt = new Date(boundStartDt.getFullYear() , boundStartDt.getMonth(), boundStartDt.getDate()); // TODO 
+              }
+              
+              var startDt = new Date(minDate['ReportDate__c']);
+              var endDt =  new Date(maxDate['ReportDate__c']);  
+              if((startDt.getFullYear() == endDt.getFullYear()) && (startDt.getMonth() == endDt.getMonth())) {
+                  // year month same so adjust start date else slider fails when min and max are both same date
+                  startDt = new Date(startDt.getFullYear() , startDt.getMonth(),startDt.getDate()); // TODO 
+              }
+			  console.log(startDt);
+              console.log(endDt);
+			   if ($("#dateSlider").html().includes('ui-rangeSlider-container'))  {
+				//alert('initialized already');
+				j$("#dateSlider").dateRangeSlider('destroy');
+					
+				} else {
+					// it is not initialized yet
+					//alert('it is not initialized yet');
+				}
+							
+			  j$("#dateSlider").dateRangeSlider({bounds: {min: boundStartDt, max: boundEndDt},
+                    defaultValues: {min: startDt, max: endDt},range: {min: {months: 1}},
+					   formatter:function(value){
+					var day = value.getDate(),
+                      month = value.getMonth(),
+                      year = value.getFullYear();
+                        return day + "-" + months[month] + "-" + year;
+                      },
+                    scales: [{
+                      first: function(value){ return value; },
+                      end: function(value) {return value; },
+                      next: function(value){
+                        var next = new Date(value);
+                        return new Date(next.setMonth(value.getMonth() + 1));
+                      },
+                      label: function(value){
+                        return months[value.getMonth()];
+                      },
+					   stop: function(val){ return false; },
+                      format: function(tickContainer, tickStart, tickEnd){
+                        tickContainer.addClass("filterTickLabel");
+						}
+                    }]});
+            /*  j$("#dateSlider").dateRangeSlider({bounds: {min: boundStartDt, max: boundEndDt},
+                    defaultValues: {min: startDt, max: endDt},
+                    formatter:function(val){
+					var day = val.getDate(),
+                      month = val.getMonth(),
+                      year = val.getFullYear();
+                        return day + "-" + months[month] + "-" + year;
+                      },
+                      //step:{
+                       // months: 1
+                      //},
+                      //step: false,
+                     range: {min: {months: 1}},
+                    scales: [{
+                      first: function(value){ return value; },
+                      end: function(value) {return value; },
+                      next: function(value){
+                        var next = new Date(value);
+                        return new Date(next.setMonth(value.getMonth() + 1));
+                      },
+                      label: function(value){
+                        return months[value.getMonth()];
+                      },
+                      format: function(tickContainer, tickStart, tickEnd){
+                        tickContainer.addClass("filterTickLabel");
+                      }
+                    }]});*/
+            
+              j$("#dateSlider").bind("valuesChanged", function(e, data){
+                  
+                  var dt1 = data.values.min;
+                  var dt2 = data.values.max;//
+				  dt2.setDate(dt2.getDate()+1)
+				  //alert('dt1='+dt1+' : dt2='+dt2);
+		
+                  dateSliderFilter(dt1.getFullYear()+'-'+(dt1.getMonth()+1)+'-'+dt1.getDate(), dt2.getFullYear()+'-'+(dt2.getMonth()+1)+'-'+dt2.getDate());
+                  //activateScreen(); // done on action function onComplete event
+               });
+               // show the start and end date
+               j$("#bStartDt").html(boundStartDt.getDate() + "-" + months[boundStartDt.getMonth()] + "-" + boundStartDt.getFullYear());
+               j$("#bEndDt").html(boundEndDt.getDate() + "-" + months[boundEndDt.getMonth()] + "-" + boundEndDt.getFullYear());
+			}
+              
+	    function dateSliderFilter(min,max) {
+		//alert(min);
+		//alert(max);
+		globalMin=min;
+		globalMax=max;
+				dateRangeSlider=true;
+				//alert(customFilter);
+					if(customFilter){
+					var filterParam=document.getElementById('listRegion').value;
+					
+					if(filterParam !='ALL'){
+								chartData = jQuery.grep(chartDataGlobal, function(element, index){
+								return (element.Region__c) == filterParam ;
+								});
+								chartData = jQuery.grep(chartData, function(element, index){
+								return Date.parse(element.ReportDate__c) <= Date.parse(globalMax) && Date.parse(element.ReportDate__c) >= Date.parse(globalMin)});
+							
+						}else{
+						
+							chartData = jQuery.grep(chartDataGlobal, function(element, index){
+								return Date.parse(element.ReportDate__c) <= Date.parse(globalMax) && Date.parse(element.ReportDate__c) >= Date.parse(globalMin)});
+						}
+					}else{
+								chartData = jQuery.grep(chartDataGlobal, function(element, index){
+							return Date.parse(element.ReportDate__c) <= Date.parse(max) && Date.parse(element.ReportDate__c) >= Date.parse(min)});	
+					}
+								
+				google.charts.setOnLoadCallback(drawChart);
+								
+			 }
+               function getMax(arr, prop) {
+					var max;
+					for (var i=0 ; i<arr.length ; i++) {
+						if (!max || Date.parse(arr[i][prop]) > Date.parse(max[prop]))
+							max = arr[i];
+					}
+					return max;
+				}
+				  function getMin(arr, prop) {
+					var min;
+					for (var i=arr.length-1 ; i>=0 ; i--) {
+						if (!min || Date.parse(arr[i][prop]) < Date.parse(min[prop]))
+							min = arr[i];
+					}
+					return min;
+				}
+				
+				function callCustomFilter() {
+				//alert('dateRangeSlider '+dateRangeSlider);
+					customFilter=true;
+					var filterParam=document.getElementById('listRegion').value;
+					if(dateRangeSlider){
+						
+						if(filterParam !='ALL'){
+								chartData = jQuery.grep(chartDataGlobal, function(element, index){
+								return (element.Region__c) == filterParam ;
+								});
+								chartData = jQuery.grep(chartData, function(element, index){
+								return Date.parse(element.ReportDate__c) <= Date.parse(globalMax) && Date.parse(element.ReportDate__c) >= Date.parse(globalMin)});
+							
+						}else{
+						
+							chartData = jQuery.grep(chartDataGlobal, function(element, index){
+								return Date.parse(element.ReportDate__c) <= Date.parse(globalMax) && Date.parse(element.ReportDate__c) >= Date.parse(globalMin)});
+						}
+					}else{
+												
+						if(filterParam !='ALL'){
+							
+								chartData = jQuery.grep(chartDataGlobal, function(element, index){
+								return (element.Region__c) == filterParam ;
+								});
+						}
+						else{
+							chartData=chartDataGlobal;
+						}
+					}
+				
+			
+								
+						google.charts.setOnLoadCallback(drawChart);
+				}
+	
+    </script>
+
+  </head>
+
+  <body>
+  <div class="w3-container w3-pale-blue w3-leftbar w3-border-blue w3-padding-medium">
+	<form autocomplete="on">
+		Metric Name : <input type='text' class='style-1' id='metricName'/>
+		Year :  <input type='text' class='style-1' id='year'/>
+		<input type='button' class="w3-btn w3-ripple w3-green" id='myBtn' value='Get Chart'/>
+
+		
+	</form>
+	
+</div>
+		<div   style='width:98%' >
+             
+                <div id="dateSlider">                    
+                    
+                       
+               
+                </div>
+                 <div style="position:relative;margin-bottom:20px;">
+                    <span id="bStartDt" style="position: absolute; left: 0px;"></span >
+                    <span id="bEndDt" style="position: absolute; right: 0px;"></span >
+                </div>
+        
+	</div>
+	
+		<div class="w3-container w3-pale-green" style='width:98%;margin-top:20px;display:none' id='divCstFilter'>
+             
+                Filter By : <label class='filterLabel'> Region </label> 
+				<select class='filterCompList' id='listRegion' onChange='callCustomFilter()'>
+				  <option value="ALL">ALL</option>
+				  <option value="Americas">North America</option>
+				  <option value="EMEA">East Middle East</option>
+				  <option value="APAC">Aisa Pacific</option>
+				  <option value="US1">US1</option>
+				  <option value="US2">US2</option>
+				  <option value="US3">US3</option>
+				  <option value="US4">US4</option>
+				  <option value="g2">g2</option>
+				  
+				</select>
+	</div>
+    <!--Div that will hold the pie chart-->
+	<div id="chartBox" class="w3-container w3-row">
+
+	
+
+	</div>
+
+
+<script type="text/javascript">
+	
+	
+			var noOfCharts=3;
+			var chartIndex=0;
+			var innerHtmlChart;
+			for (chartIndex = 0; chartIndex <noOfCharts; ++chartIndex) {
+				if(innerHtmlChart != undefined){
+								innerHtmlChart=innerHtmlChart+'<div class="chartOuterCon w3-container w3-third w3-animate-opacity"> <div class="chartLabel">	<div class="vertAlign" id="titleId'+chartIndex+'"></div></div>';
+								innerHtmlChart=innerHtmlChart+'<div id="chart_div'+chartIndex+'" style="width: 430px; height: 300px;" class="chartHolder"></div></div>';
+				}else{
+									innerHtmlChart='<div class="chartOuterCon  w3-third  w3-animate-opacity"> <div class="chartLabel">	<div class="vertAlign" id="titleId'+chartIndex+'"></div></div>';
+								innerHtmlChart=innerHtmlChart+'<div id="chart_div'+chartIndex+'" style="width: 430px; height: 300px;" class="chartHolder"></div></div>';
+				}
+						
+			}
+
+		document.getElementById("chartBox").innerHTML=innerHtmlChart;
+	
+		
+		</script>
+<!--<div id="programmatic_dashboard_div" style="border: 1px solid #ccc">
+      <table class="columns">
+        <tr>
+          <td>
+            <div id="programmatic_control_div" style="padding-left: 2em; min-width: 250px"></div>
+            <div>
+              <button style="margin: 1em 1em 1em 2em" onclick="changeRange();">
+                Select range [2, 5]
+              </button><br />
+              <button style="margin: 1em 1em 1em 2em" onclick="changeOptions();">
+                Make the pie chart 3D
+              </button>
+            </div>
+            <script type="text/javascript">
+              function changeRange() {
+                programmaticSlider.setState({'lowValue': 2, 'highValue': 5});
+                programmaticSlider.draw();
+              }
+
+              function changeOptions() {
+                programmaticChart.setOption('is3D', true);
+                programmaticChart.draw();
+              }
+            </script>
+          </td>
+          <td>
+            <div id="programmatic_chart_div"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+-->
+  </body>
+</html>
