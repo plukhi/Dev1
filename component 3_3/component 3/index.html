@@ -1,0 +1,679 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.css">
+    <script type="text/javascript" src='jquery-1.11.3.js'></script>
+    <script type="text/javascript" src='jquery.elastic.source.js'></script>
+    <script type="text/javascript" src='bootstrap/js/bootstrap.js'></script>
+    <style type="text/css">
+    .btn {
+      box-shadow: 1px 1px 3px #435a8b;
+    }
+    .btn:active {
+      box-shadow: inset 0 0 2px #000000;
+    }
+    .btn:focus, .btn:active:focus, .btn.active:focus {
+      outline: 0 none;
+    }
+    .dropdown-menu > li > a:hover {
+      color: #fff;
+      background-color: #42599e;
+      border-color: #2f477a;
+      border-width: 1px 0px;
+    }
+    /*Suggestion Box*/
+    .suggestions-box {
+      width: 100%;
+      height: 230px;
+      display: block;
+      position: relative;
+      background: #d3d7dc;
+      border-top: 1px solid #b2b2b2;
+      border-bottom: 0;
+      margin: 0 0px -1px;
+    }
+    .suggestions-toolbar {
+        height: 20%;
+        border-bottom: 1px solid #c1c6cd;
+        padding: 6px;
+    }
+    .suggestions-title {
+        color: #4e5665;
+        font-size: 13px;
+        font-weight: bold;
+        line-height: 18px;
+        margin-top: 8px;
+    }
+    .suggestions-content {
+        height: 80%;
+        white-space: nowrap;
+        overflow: hidden;
+        margin: 0px 0px 0px 0px;
+    }
+    .suggestions-toolbar>div {
+        display: inline-block;
+    }
+    .suggestion {
+        display: inline-block;
+        height: 80%;
+        width: 150px;
+        padding: 5px 8px;
+        cursor: pointer;
+        font-size: 12px;
+        background-color: #f6f7f8;
+        background-position: 50% 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,.25);
+        margin:10px;
+        vertical-align: top;
+    }
+    .suggestion:hover .suggestion-footer {
+      text-decoration: underline;
+    }
+    .suggestion-content {
+        background-size: 100%;
+        height: 80%;
+        position: relative;
+    }
+    .suggestion-content:hover {
+
+    }
+    .suggestion-content:hover > .suggestion-add {
+      display: block;
+    }
+    .suggestion-add {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%);
+        display: none;
+        color: #999999;
+    }
+    .suggestion-footer {
+        color: #6a7180 !important;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+    }
+    .suggestion-meta {
+        color: #89919c;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+    }
+    .scroll-left, .scroll-right {
+        position: absolute;
+        font-size: 30px;
+        color: #89919c;
+        cursor: pointer;
+        z-index: 999;
+        height: 80%;
+        width: 60px;
+        opacity: 0;
+    }
+    .scroll-left:hover, .scroll-right:hover {
+      opacity: 1;
+    }
+    .scroll-left:hover {
+      background: linear-gradient(-90deg, transparent, #d3d7dc);
+      /*box-shadow: 10px 0px 10px #d3d7dc;*/
+    }
+    .scroll-right:hover {
+      background: linear-gradient(90deg, transparent, #d3d7dc);
+      /*box-shadow: -10px 0px 10px #d3d7dc;*/
+    }
+    .scroll-left span, .scroll-right span{
+      position: absolute;
+      top: 40%;
+      right: 0px;
+    }
+    .scroll-left span{
+      left: 0px;
+    }
+    .scroll-right {
+        right: 0px;
+    }
+    .glyphicon-search {
+        top: 0px;
+    }
+    .add-content:hover {
+      background: inherit;
+    }
+    .button-pointer {
+      position: absolute;
+      top: -8px;
+      left: 55%;
+      background: url(./arrow-up2.png);
+      height: 10px;
+      width: 18px;
+      border-bottom: 2px solid #D3D7DC;
+      background-position: 0px -8px;
+      background-size: 18px 27px;
+      z-index: 999;
+    }
+
+
+    /*Ends Here*/
+
+
+    .new-message-box {
+      border: 1px solid #e1e8ed;
+      width: 600px;
+      border-radius: 5px;
+    }
+    .new-message-heading {
+      display: inline-block;
+      height: 50px;
+      width: 100%;
+      border-bottom: 1px solid #e1e8ed;
+    }
+    .new-message-heading span {
+      color: #3b5998;
+    }
+    .new-message-heading
+    .current-message-heading span{
+      color: black;
+    }
+    .new-message-heading > div {
+      height: 50px;
+      cursor: pointer;
+      padding: 15px 20px 0px;
+      position: relative;
+      font-weight: 600;
+    }
+    .new-message-heading > div:not(:last-child) {
+      border-right: 1px solid #e1e8ed;
+    }
+    .new-message-heading > div:hover{
+      background: #f6f7f8;
+    }
+    .new-message-heading .arrow{
+      display: none;
+    }
+    .current-message-heading .arrow {
+      position: absolute;
+      height: 10px;
+      width: 18px;
+      z-index: 999;
+      top: 80%;
+      left: 45%;
+      display: block;
+    }
+    .new-message-content {
+      min-height: 135px;
+      border-bottom: 1px solid #e1e8ed;
+    }
+    .new-message-content > div {
+      padding-top: 5px;
+    }
+    .new-message-footer {
+      min-height: 50px;
+      background-color: #f6f7f8;
+      border-top-color: #e9eaed;
+      display: inline-block;
+      width: 100%;
+      clear: both;
+      border-radius: 0px 5px 5px;
+    }
+    img.message-profile-image{
+      width: 70px;
+      height: 70px;
+      margin: 5px 0px 5px 24px;
+    }
+    textarea {
+      height: 100px;
+      max-height: 150px;
+      width: 100%;
+      border: 0px;
+      margin-top: 20px;
+      resize: none;
+    }
+    .access-menu-title {
+      font-size: 13px;
+      padding: 10px;
+      word-wrap: break-word;
+      display: block;
+    }
+    .access-meta {
+      font-size: 11px;
+    }
+    .message-operation-icons {
+      padding: 0px 0px 0px 15px;
+      color: #B3B7BD;
+      font-size: 18px;
+      float: left;
+      width: 45%;
+      height: 50px;
+    }
+    .message-action-buttons {
+      height: 50px;
+      vertical-align: top;
+      width: 60%;
+      padding: 10px;
+      float: right;
+    }
+    .message-operation-icons >div {
+      float: left;
+      height: 50px;
+      width: 40px;
+      padding: 17px 0px 0px 9px;
+      cursor: pointer;
+    }
+    .message-operation-icons i {
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .message-operation-icons >div:hover{
+      background-color: #DDDDDD;
+    }
+    .message-action-buttons > div{
+    }
+    .new-photos-message textarea{
+      margin-top: 0px;
+    }
+    .new-uploaded-images img {
+      width: 80%;
+      height: 100px;
+      margin: 14px;
+      cursor: pointer;
+    }
+    .new-uploaded-images img.loading-image {
+      width: 70px;
+      height: 70px;
+      margin: 0px auto;
+      margin-top: 25px;
+      display: block;
+    }
+    .new-uploaded-images div {
+      position: relative;
+    }
+    .new-uploaded-images .delete {
+      position: absolute;
+      top: 1px;
+      right: 16px;
+      z-index: 9999;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .message-upload-image {
+      border: 4px dashed #DDDDDD;
+      display: block;
+      height: 100px;
+      width: 110px;
+      margin: 5px 0px 20px 40px;
+      color: #DDDDDD;
+      position: relative;
+      padding: 0;
+    }
+    .message-upload-image i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      transform: translate(-50%, -50%);
+    }
+    .message-upload-image label {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+    .message-upload-image:hover {
+      color: #868484;
+    }
+    .new-message-contentType {
+      display: none;
+    }
+    </style>
+	<script src='http://cdn.tinymce.com/4/tinymce.min.js'></script>
+	<script>
+		function showRichText(){
+			tinymce.init({
+				  selector: 'textarea',
+				  height: 500,
+				  theme: 'modern',
+				  plugins: [
+					'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+					'searchreplace wordcount visualblocks visualchars code fullscreen',
+					'insertdatetime media nonbreaking save table contextmenu directionality',
+					'emoticons template paste textcolor colorpicker textpattern imagetools code'
+				  ],
+				  toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image code' ,
+				  toolbar2: 'print preview media | forecolor backcolor emoticons',
+				  image_advtab: true,
+				  templates: [
+					{ title: 'Test template 1', content: 'Test 1' },
+					{ title: 'Test template 2', content: 'Test 2' }
+				  ],
+				  content_css: [
+					'//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+					'//www.tinymce.com/css/codepen.min.css'
+				  ]
+				 });
+		}
+		
+	</script>
+</head>
+<body>
+  <div class="new-message-box">
+    <div class="new-message-heading">
+      <div class="col-md-3 current-message-heading" data-section="new-title-message">
+        <i class="fa fa-tag"></i>
+        <span>Title</span>
+        <img class="arrow" src="./arrow-up.png" />
+      </div>
+      <div class="col-md-3" data-section="new-question-message" onclick='showRichText()'>
+        <i class="fa fa-question-circle"></i>
+        <span>Question</span>
+        <img class="arrow" src="./arrow-up.png" />
+      </div>
+      <div class="col-md-3" data-section="new-photos-message">
+        <i class="fa fa-picture-o"></i>
+        <span>Add Photos</span>
+        <img class="arrow" src="./arrow-up.png" />
+      </div>
+      <div class="col-md-3" data-section="new-code-message">
+        <i class="fa fa-code"></i>
+        <span>Add Code</span>
+        <img class="arrow" src="./arrow-up.png" />
+      </div>
+    </div>
+    <div class="new-message-content">
+      <div class="row new-title-message">
+        <div class="col-md-2">
+          <img class='message-profile-image' src="./profile_image.jpg"/>
+        </div>
+        <div class="col-md-10">
+          <textarea placeholder="Please enter the title of the post."></textarea>
+        </div>
+      </div>
+      <div class="row new-question-message">
+        <div class="col-md-12">
+          <textarea placeholder="Write your question here."></textarea>
+        </div>
+      </div>
+      <div class="new-photos-message">
+        <div class="row">
+          <div class="col-md-2">
+            <img class='message-profile-image' src="./profile_image.jpg"/>
+          </div>
+          <div class="col-md-10">
+            <textarea placeholder="Please enter the title of the post."></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 message-upload-image">
+            <label>
+              <i class="fa fa-plus" title="Add photo" data-tooltip="tooltip"></i>
+              <input type="file" name="message-pic" style="display: none" />
+            </label>
+          </div>
+        </div>
+        <div class="row new-uploaded-images">
+          <div class="col-md-3"><img src="loading1.gif" class="loading-image"/><div class="delete"><i class="fa fa-times-circle"></i></div></div>
+          <div class="col-md-3"><img src="image2.jpg" /><div class="delete"><i class="fa fa-times-circle"></i></div></div>
+          <div class="col-md-3"><img src="image3.jpg" /><div class="delete"><i class="fa fa-times-circle"></i></div></div>
+          <div class="col-md-3"><img src="image1.jpg" /><div class="delete"><i class="fa fa-times-circle"></i></div></div>
+        </div>
+      </div>
+      <div class="row new-code-message">
+        <div class="col-md-12">
+          <textarea placeholder="Add you code here..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="new-message-footer">
+      <div class="message-operation-icons">
+        <div class="">
+          <label>
+            <i class="fa fa-camera" title="Add photo" data-tooltip="tooltip"></i>
+            <input type="file" name="message-inline-pic" style="display: none" />
+          </label>
+        </div>
+        <div class="">
+          <i class="fa fa-user-plus" title="Add user" data-tooltip="tooltip"></i>
+        </div>
+        <div class="">
+          <i class="fa fa-plus" title="Add code" data-tooltip="tooltip" data-toggle="modal" data-target="#codeModal"></i>
+        </div>
+      </div>
+      <div class="row message-action-buttons">
+        <div class="col-md-6">
+          <button class="btn btn-default btn-sm" id="add_content_type"><i class="fa fa-plus"></i> Add Content Type</button>
+        </div>
+        <div class="col-md-3">
+          <div class="dropdown dropdown_menu_access" style="display:inline-block">
+            <button class="btn btn-default dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
+              <span class="current_access">Access</span>
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><span class="access-menu-title">Change the access from here</span></li>
+              <li onClick="">
+                <a href="#">
+                  <div><span class="glyphicon glyphicon-cog"></span>
+                    <span class="access-val">Custom</span></div>
+                  <div><span class="access-meta">Customize</span></div>
+                </a>
+              </li>
+              <li role="separator" class="divider"></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-primary btn-sm post"></i>Post</button>
+        </div>
+      </div>
+    </div>
+    <div class="new-message-contentType" style="position: relative">
+      <span class="button-pointer"></span>
+      <div class="suggestions-box">
+          <div class="suggestions-toolbar">
+              <div class="suggestions-title col-md-7">What content type you would like to add? </div>
+              <div class="suggestions-searchbox col-md-5">
+                  <div class="input-group">
+                  <span class="input-group-addon glyphicon glyphicon-search"></span>
+                  <input type="text" class="form-control" id="suggesstions-searchtext" aria-describedby="suggesstions-searchtext"
+                  placeholder="Select the content type you would want to add.">
+                  </div>
+              </div>
+          </div>
+          <div class="scroll-left ">
+            <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+          </div>
+          <div class="scroll-right">
+            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+          </div>
+          <div class="suggestions-content">
+            <div class="suggestion" style="background: #bdc1c9;width: 20px">
+              <div class="suggestion-content" >
+              </div>
+              <div class="suggestion-footer"></div>
+              <div class="suggestion-meta"></div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="codeModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Add your inline code here.</h4>
+        </div>
+        <div class="modal-body">
+          <textarea placeholder="Your code goes here..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="add_inline_code" class="btn btn-primary" data-dismiss="modal">Add</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<script type="text/javascript">
+  var suggestions =[
+   {
+      "menuname":"Java",
+      "menulurl":"#",
+      "imgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/images/staticicons/contenttype/java.png",
+      "pimgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/#",
+      "menuid":5,
+      "description":"Java content type"
+   },
+   {
+      "menuname":"Android",
+      "menulurl":"#",
+      "imgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/images/staticicons/contenttype/android.png",
+      "pimgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/#",
+      "menuid":8,
+      "description":"Android  content type"
+   },
+   {
+      "menuname":"C#",
+      "menulurl":"#",
+      "imgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/images/staticicons/contenttype/c%23.png",
+      "pimgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/#",
+      "menuid":9,
+      "description":"C# content type"
+   },
+   {
+      "menuname":"C++",
+      "menulurl":"#",
+      "imgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/images/staticicons/contenttype/c%2B%2B.png",
+      "pimgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/#",
+      "menuid":10,
+      "description":"C++ content type "
+   },
+   {
+      "menuname":"Android",
+      "menulurl":"#",
+      "imgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/images/staticicons/contenttype/android.png",
+      "pimgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/#",
+      "menuid":8,
+      "description":"Android  content type"
+   },
+   {
+      "menuname":"C#",
+      "menulurl":"#",
+      "imgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/images/staticicons/contenttype/c%23.png",
+      "pimgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/#",
+      "menuid":9,
+      "description":"C# content type"
+   },
+   {
+      "menuname":"C++",
+      "menulurl":"#",
+      "imgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/images/staticicons/contenttype/c%2B%2B.png",
+      "pimgurl":"http://staticln.s3-website-us-west-2.amazonaws.com/#",
+      "menuid":10,
+      "description":"C++ content type "
+   }
+];
+  $(function() {
+    $('textarea').elastic();
+    $('textarea').trigger('update');
+
+    $('[data-tooltip="tooltip"]').tooltip();
+    $(".new-message-heading").on('click', 'div', function() {
+      var section = $(this).attr('data-section');
+      $(this).parent().children().removeClass('current-message-heading');
+      $(this).addClass('current-message-heading');
+      $('.new-message-content>div').hide();
+      $('.new-message-content .' + section).show();
+
+      $("#add_content_type").hide();
+      $(".message-operation-icons").children().hide();
+      switch(section) {
+        case 'new-title-message':
+            $("#add_content_type").show();
+          break;
+        case 'new-question-message':
+            $(".message-operation-icons").children().show();
+          break;
+        case 'new-photos-message':
+          break;
+        case 'new-code-message':
+          break;
+      }
+    });
+    $("#codeModal").on('show.bs.modal', function () {
+      $(this).find('textarea').val('');
+    });
+    $("#add_inline_code").on('click', function() {
+      $(".new-question-message textarea").val($(".new-question-message textarea").val() + $("#codeModal textarea").val());
+    });
+    $('.new-message-heading div:first-child').trigger('click');
+    $("#add_content_type").on('click' , function() {
+      //$('.suggestions-content').animate({scrollLeft:  0}, 0, 'linear');
+      $(".new-message-contentType").toggle();
+      //$('.suggestions-content').animate({scrollLeft:  50}, 300, 'linear');
+    });
+
+    $(".dropdown_menu_access").on('click', 'a', function () {
+      $(".dropdown_menu_access .current_access").text($(this).find('.access-val').html());
+    });
+
+    $(".new-uploaded-images ").on('click', '.delete', function() {
+      $(this).parent('div').remove();
+    })
+
+    //Suggestion box initialization
+    populate_suggestions(suggestions);
+
+    $(".suggestions-box .scroll-left").on('click', function() {
+        var leftOffset = $(".suggestions-content").scrollLeft() - 480 < 15 ? 15 : $(".suggestions-content").scrollLeft() - 480;
+        $('.suggestions-content').stop().animate({scrollLeft: leftOffset}, 500, 'linear');
+    })
+    $(".suggestions-box .scroll-right").on('click', function() {
+        $('.suggestions-content').stop().animate({scrollLeft: $(".suggestions-content").scrollLeft() + 480}, 500, 'linear');
+    })
+    $(".suggestions-content").on('click', '.suggestion:not(:first-child())', function() {
+      var self = this;
+      $("#suggesstions-searchtext")
+        .val(suggestions.filter(function(val){return val.menuid === $(self).data('menuId')})[0].menuname)
+        .trigger('input');
+      setTimeout(function() {
+        $(".new-message-contentType").hide();
+      },1000)
+    });
+    $("#suggesstions-searchtext").on('input', function() {
+        var val = $(this).val(),
+            filteredSuggestions = $.grep(suggestions, function(v, i) {
+            return v.menuname.match(new RegExp('^' + val,'gi'));
+        });
+        populate_suggestions(filteredSuggestions);
+    });
+
+
+  function populate_suggestions(suggestions) {
+    $(".suggestions-content .suggestion:not(:first)").remove();
+    $.each(suggestions, function(index, val) {
+          suggestion_box = $("<div></div>").data('menuId', val.menuid).addClass('suggestion');
+          add_icon = $("<span></span>").addClass("glyphicon glyphicon-plus");
+          suggestion_add = $('<button></button>').addClass('suggestion-add btn btn-default btn-sm');
+          suggestion_add.append(add_icon.get(0));
+          suggestion_add.append("Add Type");
+          suggestion_content = $("<div></div>").css({
+              'background': 'url("' + val.imgurl + '") no-repeat 0 / 100% 100%'
+          }).addClass('suggestion-content')
+          .append(suggestion_add)
+          .appendTo(suggestion_box);
+          suggestion_footer = $("<div></div>").addClass('suggestion-footer').append('span').html(val.menuname).appendTo(suggestion_box);
+          suggestion_meta = $("<div></div>").addClass('suggestion-meta').append('span').html(val.description).appendTo(suggestion_box);
+
+          $(".suggestions-content").append(suggestion_box);
+      });
+  };
+});
+
+</script>
+</body>
+</html>
