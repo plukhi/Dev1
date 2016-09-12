@@ -350,14 +350,16 @@ angular.module('angularGanttDemoApp')
         // Reload data action
         $scope.load = function() {
             $scope.data = getSampleData();
+			$scope.data1 = Sample.getSampleData();
+			//console.log($scope.data1);
             dataToRemove = undefined;
 
             $scope.timespans = Sample.getSampleTimespans();
         };
  
          var getSampleData = function() {
-			 
-			 var input='{"ACFTS":[{"4":["A320","D-NLPD"]},{"1":["A320","D-NLPA"]},{"2":["A320","D-NLPB"]},{"3":["A320","D-NLPC"]},{"5":["E190","D-EKLA"]},{"6":["E190","D-EKLB"]},{"7":["E190","D-EKLC"]},{"8":["E190","D-EKLD"]},{"9":["CRJ700","D-ICKA"]},{"26":["CRJ700","D-ICKQ"]},{"21":["CRJ700","D-ICKL"]},{"16":["CRJ700","D-ICKG"]},{"32":["CRJ700","D-ICKW"]},{"11":["CRJ700","D-ICKB"]},{"27":["CRJ700","D-ICKR"]},{"22":["CRJ700","D-ICKM"]},{"17":["CRJ700","D-ICKH"]},{"12":["CRJ700","D-ICKC"]},{"28":["CRJ700","D-ICKS"]},{"23":["CRJ700","D-ICKN"]},{"18":["CRJ700","D-ICKI"]},{"13":["CRJ700","D-ICKD"]},{"29":["CRJ700","D-ICKT"]},{"24":["CRJ700","D-ICKO"]},{"19":["CRJ700","D-ICKJ"]},{"14":["CRJ700","D-ICKE"]},{"30":["CRJ700","D-ICKU"]},{"25":["CRJ700","D-ICKP"]},{"20":["CRJ700","D-ICKK"]},{"15":["CRJ700","D-ICKF"]},{"31":["CRJ700","D-ICKV"]}],"FLTS":[{"ac_id":"5","fn_number":"AOG","dep_ap_sched":"","arr_ap_sched":"","dep_ap_act":"221","arr_ap_act":"221","dep_sched_dt":"","arr_sched_dt":"","dep_act_dt":"1463338620","arr_act_dt":1473717600,"main_color":"rgb(0,0,255)","act_color":"rgb(255,128,0)"},{"ac_id":"17","flt_id":null,"fn_number":"TST1","dep_ap_sched":"DUS","arr_ap_sched":"GWT","dep_ap_act":"DUS","arr_ap_act":"GWT","dep_sched_dt":"1473537600","arr_sched_dt":"1473541200","dep_act_dt":"1473537600","arr_act_dt":"1473541200","main_color":"rgb(0,0,255)","act_color":"rgb(0,153,0)"},{"ac_id":"17","flt_id":null,"fn_number":"TST2","dep_ap_sched":"GWT","arr_ap_sched":"VIE","dep_ap_act":"GWT","arr_ap_act":"VIE","dep_sched_dt":"1473544800","arr_sched_dt":"1473555600","dep_act_dt":"1473544800","arr_act_dt":"1473555600","main_color":"rgb(0,0,255)","act_color":"rgb(0,153,0)"}]}';
+			 var starDate=new Date();
+			 var input='{"ACFTS":[{"4":["A320","D-NLPD"]},{"1":["A320","D-NLPA"]},{"2":["A320","D-NLPB"]},{"3":["A320","D-NLPC"]},{"5":["E190","D-EKLA"]},{"6":["E190","D-EKLB"]},{"7":["E190","D-EKLC"]},{"8":["E190","D-EKLD"]},{"9":["CRJ700","D-ICKA"]},{"26":["CRJ700","D-ICKQ"]},{"21":["CRJ700","D-ICKL"]},{"16":["CRJ700","D-ICKG"]},{"32":["CRJ700","D-ICKW"]},{"11":["CRJ700","D-ICKB"]},{"27":["CRJ700","D-ICKR"]},{"22":["CRJ700","D-ICKM"]},{"17":["CRJ700","D-ICKH"]},{"12":["CRJ700","D-ICKC"]},{"28":["CRJ700","D-ICKS"]},{"23":["CRJ700","D-ICKN"]},{"18":["CRJ700","D-ICKI"]},{"13":["CRJ700","D-ICKD"]},{"29":["CRJ700","D-ICKT"]},{"24":["CRJ700","D-ICKO"]},{"19":["CRJ700","D-ICKJ"]},{"14":["CRJ700","D-ICKE"]},{"30":["CRJ700","D-ICKU"]},{"25":["CRJ700","D-ICKP"]},{"20":["CRJ700","D-ICKK"]},{"15":["CRJ700","D-ICKF"]},{"31":["CRJ700","D-ICKV"]}],"FLTS":[{"ac_id":"5","fn_number":"AOG","dep_ap_sched":"","arr_ap_sched":"","dep_ap_act":"221","arr_ap_act":"221","dep_sched_dt":"","arr_sched_dt":"","dep_act_dt":"1447338620","arr_act_dt":1423717600,"main_color":"rgb(0,0,255)","act_color":"rgb(255,128,0)"},{"ac_id":"17","flt_id":null,"fn_number":"TST1","dep_ap_sched":"DUS","arr_ap_sched":"GWT","dep_ap_act":"DUS","arr_ap_act":"GWT","dep_sched_dt":"1473537600","arr_sched_dt":"555420000","dep_act_dt":"555420000","arr_act_dt":"382620000","main_color":"rgb(0,0,255)","act_color":"rgb(0,153,0)"},{"ac_id":"17","flt_id":null,"fn_number":"TST2","dep_ap_sched":"GWT","arr_ap_sched":"VIE","dep_ap_act":"GWT","arr_ap_act":"VIE","dep_sched_dt":"987420000","arr_sched_dt":"555420000","dep_act_dt":"1246620000","arr_act_dt":"814620000","main_color":"rgb(0,0,255)","act_color":"rgb(0,153,0)"}]}';
 			var inputObj=JSON.parse(input);
 			var rowCont=inputObj.ACFTS;
 			var taskCont=inputObj.FLTS;
@@ -389,7 +391,8 @@ angular.module('angularGanttDemoApp')
 				
 					
 				}
-				
+			 var starDate1=new Date();
+			 console.log("Diff. Seconds 1: "+((starDate1-starDate)/100).toString());
 			for(var flights in taskCont){
 					taskobjRow=new Object();
 					for(var key in taskCont[flights]){
@@ -416,25 +419,74 @@ angular.module('angularGanttDemoApp')
 					
 					
 				}
-
-			 console.log(map);
+			var starDate2=new Date();
+			console.log("Diff. Seconds 2: "+((starDate2-starDate1)/100).toString());
 			 
 			var finalSample=[];
 			var rowFinalObj={};
+			
+			var taskobject={};
+		
 			for(var flights in taskCont){
+				rowFinalObj={};
+				rowFinalObj.tasks=[];
+				taskobject={};
 				
 				rowFinalObj.name=map[taskCont[flights]['ac_id']].subName;
-				finalSample.push(rowFinalObj);
+				taskobject.name=map[taskCont[flights]['ac_id']].taskEvent[0].fn_number;
+				taskobject.mainColor=map[taskCont[flights]['ac_id']].taskEvent[0].main_color;
+				taskobject.actColor=map[taskCont[flights]['ac_id']].taskEvent[0].act_color;
+				taskobject.from=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_sched_dt));
+				taskobject.to=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_sched_dt));
+			
+				taskobject.fromActual=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_act_dt));
+				taskobject.est=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_act_dt));
+					
+				taskobject.toActual=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_act_dt));
+				taskobject.lct=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_act_dt));
+			
+				
+				var found = false;
+				if(finalSample.length==0){
+					rowFinalObj.tasks.push(taskobject);
+					finalSample.push(rowFinalObj);
+				}else{
+				for(var i = 0; i < finalSample.length; i++) {
+						if (finalSample[i].name == rowFinalObj.name) {
+								found = true;
+								finalSample[i].tasks.push(taskobject);
+								
+								
+							
+							break;
+						}
+					}
+					if(!found){
+						rowFinalObj.tasks.push(taskobject);
+						finalSample.push(rowFinalObj);
+					}
+				}
+				
+				
+				
 			}
-			  console.log(finalSample);
-			  return finalSample;
-			/*$http.get("http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php")
+		 var starDate3=new Date();
+		 console.log("Diff. Seconds 3 : "+((starDate3-starDate2)/100).toString());
+			  //console.log(finalSample);
+			    //console.log($scope.data1);
+			  
+			  var user = "lm_develop";
+			  var pwd = "lm_develop";
+		      return finalSample;
+   // $http.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode(user + ':' + pwd);
+
+				/*$http.jsonp("http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php")
 						.then(function(response) {
-							console.log(response.data);
-						  return response.data;
+							//console.log(response.data);
+						 // return response.data;
 						});  
 						
-						
+					
 						$http({
     method: 'POST',
     url: '/API/authenticate',
