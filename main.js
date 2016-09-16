@@ -12,7 +12,7 @@ angular.module('angularGanttDemoApp')
         var objectModel;
         var dataToRemove;
 
-	
+				var finalSampleOut=[];
 
         // Event handler
         var logScrollEvent = function(left, date, direction) {
@@ -183,6 +183,7 @@ angular.module('angularGanttDemoApp')
 
                 api.core.on.ready($scope, function() {
                     // Log various events to console
+					
                     api.scroll.on.scroll($scope, logScrollEvent);
                     api.core.on.ready($scope, logReadyEvent);
 
@@ -211,7 +212,7 @@ angular.module('angularGanttDemoApp')
                         //api.tasks.on.draw($scope, addEventName('tasks.on.draw', logTaskEvent));
                         api.tasks.on.drawEnd($scope, addEventName('tasks.on.drawEnd', logTaskEvent));
                     }
-
+				
                     api.rows.on.add($scope, addEventName('rows.on.add', logRowEvent));
                     api.rows.on.change($scope, addEventName('rows.on.change', logRowEvent));
                     api.rows.on.move($scope, addEventName('rows.on.move', logRowEvent));
@@ -222,6 +223,7 @@ angular.module('angularGanttDemoApp')
                     api.side.on.resizeEnd($scope, addEventName('labels.on.resizeEnd', logLabelsEvent));
 
                     api.timespans.on.add($scope, addEventName('timespans.on.add', logTimespanEvent));
+
                     api.columns.on.generate($scope, logColumnsGenerateEvent);
 
                     api.rows.on.filter($scope, logRowsFilterEvent);
@@ -256,11 +258,7 @@ angular.module('angularGanttDemoApp')
                                 }
                                 $scope.$digest();
                             });
-							
-							  element.on('contextmenu', function(event){
-								  //event.preventDefault();
-								  //alert('something news');
-								});
+						
                         } else if (directiveName === 'ganttRow') {
                             element.bind('click', function(event) {
                                 event.stopPropagation();
@@ -284,6 +282,7 @@ angular.module('angularGanttDemoApp')
 
                     api.tasks.on.rowChange($scope, function(task) {
                         $scope.live.row = task.row.model;
+						
                     });
 
                     objectModel = new ObjectModel(api);
@@ -349,202 +348,153 @@ angular.module('angularGanttDemoApp')
 
         // Reload data action
         $scope.load = function() {
-            $scope.data = getSampleData();
+			 var starDate11=new Date();
+			 getSampleData();
+            //$scope.data = finalSampleOut;
 			$scope.data1 = Sample.getSampleData();
 			//console.log($scope.data1);
             dataToRemove = undefined;
 
             $scope.timespans = Sample.getSampleTimespans();
+			var starDate12=new Date();
+			console.log("Diff. Seconds load method : "+((starDate12-starDate11)/1000).toString());
         };
  
          var getSampleData = function() {
 			 var starDate=new Date();
-			 var input='{"ACFTS":[{"4":["A320","D-NLPD"]},{"1":["A320","D-NLPA"]},{"2":["A320","D-NLPB"]},{"3":["A320","D-NLPC"]},{"5":["E190","D-EKLA"]},{"6":["E190","D-EKLB"]},{"7":["E190","D-EKLC"]},{"8":["E190","D-EKLD"]},{"9":["CRJ700","D-ICKA"]},{"26":["CRJ700","D-ICKQ"]},{"21":["CRJ700","D-ICKL"]},{"16":["CRJ700","D-ICKG"]},{"32":["CRJ700","D-ICKW"]},{"11":["CRJ700","D-ICKB"]},{"27":["CRJ700","D-ICKR"]},{"22":["CRJ700","D-ICKM"]},{"17":["CRJ700","D-ICKH"]},{"12":["CRJ700","D-ICKC"]},{"28":["CRJ700","D-ICKS"]},{"23":["CRJ700","D-ICKN"]},{"18":["CRJ700","D-ICKI"]},{"13":["CRJ700","D-ICKD"]},{"29":["CRJ700","D-ICKT"]},{"24":["CRJ700","D-ICKO"]},{"19":["CRJ700","D-ICKJ"]},{"14":["CRJ700","D-ICKE"]},{"30":["CRJ700","D-ICKU"]},{"25":["CRJ700","D-ICKP"]},{"20":["CRJ700","D-ICKK"]},{"15":["CRJ700","D-ICKF"]},{"31":["CRJ700","D-ICKV"]}],"FLTS":[{"ac_id":"5","fn_number":"AOG","dep_ap_sched":"","arr_ap_sched":"","dep_ap_act":"221","arr_ap_act":"221","dep_sched_dt":"","arr_sched_dt":"","dep_act_dt":"1447338620","arr_act_dt":1423717600,"main_color":"rgb(0,0,255)","act_color":"rgb(255,128,0)"},{"ac_id":"17","flt_id":null,"fn_number":"TST1","dep_ap_sched":"DUS","arr_ap_sched":"GWT","dep_ap_act":"DUS","arr_ap_act":"GWT","dep_sched_dt":"1473537600","arr_sched_dt":"555420000","dep_act_dt":"555420000","arr_act_dt":"382620000","main_color":"rgb(0,0,255)","act_color":"rgb(0,153,0)"},{"ac_id":"17","flt_id":null,"fn_number":"TST2","dep_ap_sched":"GWT","arr_ap_sched":"VIE","dep_ap_act":"GWT","arr_ap_act":"VIE","dep_sched_dt":"987420000","arr_sched_dt":"555420000","dep_act_dt":"1246620000","arr_act_dt":"814620000","main_color":"rgb(0,0,255)","act_color":"rgb(0,153,0)"}]}';
-			var inputObj=JSON.parse(input);
-			var rowCont=inputObj.ACFTS;
-			var taskCont=inputObj.FLTS;
-			var objRowList=[];
-			var objRow=new Object();
-			var taskobjRow=new Object();
+			 var input='';
+			
+			
 			var map = new Object(); // or var map = {};
 			
 
 			function getMap(k) {
 				return map[k];
 			}
+			var xmlhttp = new XMLHttpRequest();
+			var theUrl = "http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php?username=lm_develop&password=lm_develop";
+			  var xmlHttp = new XMLHttpRequest();
+		//	var deferred = $q.defer();
+				xmlHttp.onreadystatechange = function() { 
+					if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+						//myFunction(JSON.parse(xmlHttp.responseText));
+					  $scope.data = myFunction(JSON.parse(xmlHttp.responseText));;
+				}
+				xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+				xmlHttp.send(null);
+			/*$http.get(theUrl)
+			.success( function(response, status, headers, config) {
+				 alert('succsess');
+				   
+				 
+			})
+			.error(function(errResp) {
+				 alert('error');
+				  
+			});*/
 
-				for(var accId in rowCont){
+			function myFunction(arr) {
+					
+					var finalSample=[];
+					var starDate11=new Date();
+					var inputObj=arr;
+					var starDate12=new Date();
+					console.log("Diff. Seconds 1: "+((starDate12-starDate11)/1000).toString());
+					var rowCont=inputObj.ACFTS;
+					var taskCont=inputObj.FLTS;
+					var objRowList=[];
+					var objRow=new Object();
+					var taskobjRow=new Object();
+					for(var accId in rowCont){
 					objRow=new Object();
 					for(var key in rowCont[accId]){
 						objRow.accId=key;
 						objRow.name=rowCont[accId][key][0];
 						objRow.subName=rowCont[accId][key][1];
 						objRow.taskEvent=[];
-						//objRow.flt_id="";
-						//objRow.fn_number="";
-						//objRow.dep_ap_sched="";
-						//sobjRow.arr_ap_sched="";
+			
 						map[key] = objRow;	
 					}
-					
-				
-				
-					
 				}
 			 var starDate1=new Date();
-			 console.log("Diff. Seconds 1: "+((starDate1-starDate)/100).toString());
-			for(var flights in taskCont){
+			 console.log("Diff. Seconds 2: "+((starDate1-starDate12)/1000).toString());
+			 for(var flights in taskCont){
 					taskobjRow=new Object();
 					for(var key in taskCont[flights]){
-						
 							
-							//taskobjRow.flt_id=taskCont[flights]['flt_id'];
-							//taskobjRow.fn_number=taskCont[flights]['fn_number'];
-							//taskobjRow.dep_ap_sched=taskCont[flights]['dep_ap_sched'];
-							//taskobjRow.arr_ap_sched=taskCont[flights]['arr_ap_sched'];
 							taskobjRow[key]=taskCont[flights][key];
-							
-									
-							
 							//map[taskCont[flights]['ac_id']].task[count]=
 							//map[taskCont[flights]['ac_id']].flt_id=taskCont[flights]['flt_id'];
 							//map[taskCont[flights]['ac_id']].fn_number=taskCont[flights][fn_number];
 							//map[taskCont[flights]['ac_id'].dep_ap_sched=taskCont[flights][dep_ap_sched];
 							//map[taskCont[flights]['ac_id'].arr_ap_sched=taskCont[flights][arr_ap_sched];
-							
-						
 					}
 					
 				map[taskCont[flights]['ac_id']].taskEvent.push(taskobjRow);
-					
-					
-				}
+			}
 			var starDate2=new Date();
-			console.log("Diff. Seconds 2: "+((starDate2-starDate1)/100).toString());
+			console.log("Diff. Seconds 3: "+((starDate2-starDate1)/1000).toString());
 			 
-			var finalSample=[];
+		
 			var rowFinalObj={};
 			
 			var taskobject={};
 		
-			for(var flights in taskCont){
-				rowFinalObj={};
-				rowFinalObj.tasks=[];
-				taskobject={};
-				
-				rowFinalObj.name=map[taskCont[flights]['ac_id']].subName;
-				taskobject.name=map[taskCont[flights]['ac_id']].taskEvent[0].fn_number;
-				taskobject.mainColor=map[taskCont[flights]['ac_id']].taskEvent[0].main_color;
-				taskobject.actColor=map[taskCont[flights]['ac_id']].taskEvent[0].act_color;
-				taskobject.from=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_sched_dt));
-				taskobject.to=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_sched_dt));
-			
-				taskobject.fromActual=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_act_dt));
-				taskobject.est=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_act_dt));
+				for(var flights in taskCont){
+					rowFinalObj={};
+					rowFinalObj.tasks=[];
+					taskobject={};
 					
-				taskobject.toActual=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_act_dt));
-				taskobject.lct=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_act_dt));
-			
+					rowFinalObj.name=map[taskCont[flights]['ac_id']].subName;
+					rowFinalObj.ac_id=taskCont[flights]['ac_id'];
+					taskobject.ac_id=taskCont[flights]['ac_id'];
+					taskobject.name=map[taskCont[flights]['ac_id']].taskEvent[0].fn_number;
+					taskobject.mainColor=map[taskCont[flights]['ac_id']].taskEvent[0].main_color;
+					taskobject.actColor=map[taskCont[flights]['ac_id']].taskEvent[0].act_color;
+					taskobject.from=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_sched_dt));
+					taskobject.to=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_sched_dt));
 				
-				var found = false;
-				if(finalSample.length==0){
-					rowFinalObj.tasks.push(taskobject);
-					finalSample.push(rowFinalObj);
-				}else{
-				for(var i = 0; i < finalSample.length; i++) {
-						if (finalSample[i].name == rowFinalObj.name) {
-								found = true;
-								finalSample[i].tasks.push(taskobject);
-								
-								
-							
-							break;
-						}
-					}
-					if(!found){
+					taskobject.fromActual=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_act_dt));
+					taskobject.est=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].arr_act_dt));
+						
+					taskobject.toActual=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_act_dt));
+					taskobject.lct=new Date(Number(map[taskCont[flights]['ac_id']].taskEvent[0].dep_act_dt));
+				
+					
+					var found = false;
+					if(finalSample.length==0){
 						rowFinalObj.tasks.push(taskobject);
 						finalSample.push(rowFinalObj);
+					}else{
+					for(var i = 0; i < finalSample.length; i++) {
+							if (finalSample[i].name == rowFinalObj.name) {
+									found = true;
+									finalSample[i].tasks.push(taskobject);
+									
+									
+								
+								break;
+							}
+						}
+						if(!found){
+							rowFinalObj.tasks.push(taskobject);
+							finalSample.push(rowFinalObj);
+						}
 					}
 				}
-				
-				
-				
+			 var starDate3=new Date();
+			 console.log("Diff. Seconds 4 : "+((starDate3-starDate2)/1000).toString());
+				  //console.log(finalSample);
+					//console.log($scope.data1);
+				  
+				  var user = "lm_develop";
+				  var pwd = "lm_develop";	
+					return finalSample; 
+									
 			}
-		 var starDate3=new Date();
-		 console.log("Diff. Seconds 3 : "+((starDate3-starDate2)/100).toString());
-			  //console.log(finalSample);
-			    //console.log($scope.data1);
-			  
-			  var user = "lm_develop";
-			  var pwd = "lm_develop";
-		      return finalSample;
-   // $http.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode(user + ':' + pwd);
-
-				/*$http.jsonp("http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php")
-						.then(function(response) {
-							//console.log(response.data);
-						 // return response.data;
-						});  
-						
-					
-						$http({
-    method: 'POST',
-    url: '/API/authenticate',
-    data: 'username=' + username + '&password=' + password + '&email=' + email,
-    headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "X-Login-Ajax-call": 'true'
-    }
-}).then(function(response) {
-    if (response.data == 'ok') {
-        // success
-    } else {
-        // failed
-    }
-});*/
-						
-						/*$http({
-							method: 'JSONP',
-							url: 'http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php',
-							callback=JSON_CALLBACK
-						}).then(function(response) {
-							console.log('ok');
-						});
-        };
-		 $http.jsonp("http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php?callback=JSON_CALLBACK")
-            .success(function (data) {
-                $scope.realTimeData = JSON_CALLBACK (data);
-                console.log($scope.realTimeData)
-            });*/
-				
-			/*$http({
-				method: 'JSONP',
-				url: 'http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php'
-				
-			}).then(function(response) {
-							alert('ok');
-						});*/
-							/*$http.jsonp("http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php?callback=JSON_CALLBACK")
-            .success(function (data) {
-               /* $scope.realTimeData = JSON_CALLBACK (data);
-                console.log($scope.realTimeData)
-				alert('data');
-            });*/
-						/*$http.jsonp("http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php?callback=JSON_CALLBACK")
-            .success(function (data) {
-               /* $scope.realTimeData = JSON_CALLBACK (data);
-                console.log($scope.realTimeData)
-				alert('data');
-            });*/
-			//$http.get("http://www.sigmo-databases.com/testplatform/moc/pages/opscontrol_json.php")
-            //.success(function (data) {
-            //  var total = $.parseJSON(data);
-			//	alert(total);
-           // });
-			     //    console.log('parth');
-				 
-		
-			
+									
+		      
+   
 			 };
         $scope.reload = function() {
             $scope.load();
